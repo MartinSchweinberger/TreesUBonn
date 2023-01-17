@@ -163,6 +163,9 @@ To calculate the Gini value of Gender, we need to calculate the weighted average
 
 G_{Gender} = \frac{N_{men}} {N_{Total}} \times G_{men} +  \frac{N_{women}} {N_{Total}} \times G_{women}  
 
+\end{equation}
+
+\begin{equation}
 
 G_{Gender} = \frac{159} {303} \times 0.4602235 +  \frac{144} {303} \times 0.4358432 = 0.4611915
 
