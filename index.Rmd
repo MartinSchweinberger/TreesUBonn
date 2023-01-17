@@ -65,6 +65,13 @@ Schweinberger, Martin. 2023. *An introduction to conditional inference trees in 
 }
 ```
 
+***
+
+[Back to the workshop repo](https://github.com/MartinSchweinberger/TreesUBonn)
+
+***
+
+
 
 
 
