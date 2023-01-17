@@ -55,13 +55,13 @@ During practice, we will use a Jupyter notebook and you can
 
 ## Citation & Session Info {-}
 
-Schweinberger, Martin. 2023. *An introduction to conditional inference trees in R*. Brisbane: The University of Queensland. url: https://github.com/MartinSchweinberger/TreesUBonn/treesubonn.html (Version 2023.01.19).
+Schweinberger, Martin. 2023. *An introduction to conditional inference trees in R*. Brisbane: The University of Queensland. url: https://MartinSchweinberger.github.io/TreesUBonn/index.html (Version 2023.01.19).
 
 ```
 @manual{schweinberger2023tree,
   author = {Schweinberger, Martin},
   title = {An introduction to conditional inference trees in R},
-  note = {https://github.com/MartinSchweinberger/TreesUBonn/treesubonn.html},
+  note = {https://MartinSchweinberger.github.io/TreesUBonn/index.html},
   year = {2023},
   organization = "The University of Queensland, Australia. School of Languages and Cultures},
   address = {Brisbane},
