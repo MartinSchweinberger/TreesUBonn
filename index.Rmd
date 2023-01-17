@@ -9,9 +9,13 @@ biblio-style: apalike
 link-citations: yes
 ---
 
+```{r ladal, echo=FALSE, out.width= "30%", out.extra='style="float:right; padding:10px"'}
+knitr::include_graphics("https://slcladal.github.io/images/LadalGrey.png")
+```
+
 # Introduction {-}
 
-This workshop focuses on conditional inference trees and their implementation in R.
+This workshop focuses on conditional inference trees and their implementation in R. The workshop uses materials provided by the [*Language Technology and Data Analysis Laboratory* (LADAL)](www.ladal.edu.au). If you want a more detailed tutorial on tree-based methods going beyond what the workshop covers see [this LADAL tutorial](https://ladal.edu.au/tree.html) or you would like to know more about doing statistics and text analysis with R, please free to visit and explore the [LADAL website](www.ladal.edu.au).
 
 ```{r martin, echo=FALSE, out.width= "30%", out.extra='style="float:right; padding:10px"'}
 knitr::include_graphics("https://slcladal.github.io/images/martinsface.jpg")

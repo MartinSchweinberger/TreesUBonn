@@ -83,9 +83,6 @@ Before going through how this conditional decision tree is generated, let us fir
 
 How to prune and evaluate the accuracy of decision trees is not shown here. If you are interested in this, please check out chapter 7 of @gries2021statistics which is a highly recommendable resource that provide a lot of additional information about decision trees and CARTs. 
 
-
-## Tree-Based Models in R {-}
-
 We will now focus on how to implement tree-based models in R and continue with getting a more detaled understanding og how tree-based methods work.
 
 ## How Tree-Based Methods Work {-}
@@ -164,7 +161,8 @@ To calculate the Gini value of Gender, we need to calculate the weighted average
 
 \begin{equation}
 
-G_{Gender} = \frac{N_{men}} {N_{Total}} \times G_{men} +  \frac{N_{women}} {N_{Total}} \times G_{women}
+G_{Gender} = \frac{N_{men}} {N_{Total}} \times G_{men} +  \frac{N_{women}} {N_{Total}} \times G_{women}  
+
 
 G_{Gender} = \frac{159} {303} \times 0.4602235 +  \frac{144} {303} \times 0.4358432 = 0.4611915
 
