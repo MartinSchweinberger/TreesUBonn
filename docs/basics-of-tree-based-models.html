@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Basics of tree-based models | An introduction to conditional inference trees in R</title>
+  <meta name="description" content="Basics of tree-based models | An introduction to conditional inference trees in R" />
+  <meta name="generator" content="bookdown 0.31 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Basics of tree-based models | An introduction to conditional inference trees in R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Basics of tree-based models | An introduction to conditional inference trees in R" />
+  
+  
+  
+
+<meta name="author" content="Martin Schweinberger" />
+
+
+<meta name="date" content="2023-01-19" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="conditional-inference-trees.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/tabwid-1.1.2/tabwid.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Conditional Inference Trees in R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i><b>1.1</b> About me</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#about-the-workshop"><i class="fa fa-check"></i><b>1.2</b> About the workshop</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#citation-session-info"><i class="fa fa-check"></i>Citation &amp; Session Info</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="basics-of-tree-based-models.html"><a href="basics-of-tree-based-models.html"><i class="fa fa-check"></i>Basics of tree-based models</a>
+<ul>
+<li class="chapter" data-level="" data-path="basics-of-tree-based-models.html"><a href="basics-of-tree-based-models.html#advantages"><i class="fa fa-check"></i>Advantages</a></li>
+<li class="chapter" data-level="" data-path="basics-of-tree-based-models.html"><a href="basics-of-tree-based-models.html#problems"><i class="fa fa-check"></i>Problems</a></li>
+<li class="chapter" data-level="" data-path="basics-of-tree-based-models.html"><a href="basics-of-tree-based-models.html#classification-and-regression-trees"><i class="fa fa-check"></i>Classification And Regression Trees</a></li>
+<li class="chapter" data-level="" data-path="basics-of-tree-based-models.html"><a href="basics-of-tree-based-models.html#tree-based-models-in-r"><i class="fa fa-check"></i>Tree-Based Models in R</a></li>
+<li class="chapter" data-level="" data-path="basics-of-tree-based-models.html"><a href="basics-of-tree-based-models.html#how-tree-based-methods-work"><i class="fa fa-check"></i>How Tree-Based Methods Work</a></li>
+<li class="chapter" data-level="" data-path="basics-of-tree-based-models.html"><a href="basics-of-tree-based-models.html#splitting-numeric-ordinal-and-true-categorical-variables"><i class="fa fa-check"></i>Splitting numeric, ordinal, and true categorical variables</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="conditional-inference-trees.html"><a href="conditional-inference-trees.html"><i class="fa fa-check"></i><b>2</b> Conditional Inference Trees</a>
+<ul>
+<li class="chapter" data-level="" data-path="conditional-inference-trees.html"><a href="conditional-inference-trees.html#prettifying-your-cit-tree"><i class="fa fa-check"></i>Prettifying your CIT tree</a></li>
+<li class="chapter" data-level="" data-path="conditional-inference-trees.html"><a href="conditional-inference-trees.html#problems-of-conditional-inference-trees"><i class="fa fa-check"></i>Problems of Conditional Inference Trees</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="practice.html"><a href="practice.html"><i class="fa fa-check"></i><b>3</b> Practice</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">An introduction to conditional inference trees in R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="basics-of-tree-based-models" class="section level1 unnumbered hasAnchor">
+<h1>Basics of tree-based models<a href="basics-of-tree-based-models.html#basics-of-tree-based-models" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Tree-structure models fall into the machine-learning rather than the inference statistics category as they are commonly used for classification and prediction tasks rather than explanation of relationships between variables. The tree structure represents recursive partitioning of the data to minimize residual deviance that is based on iteratively splitting the data into two subsets.</p>
+<p>The most basic type of tree-structure model is a decision tree which is a type of classification and regression tree (CART). A more elaborate version of a CART is called a Conditional Inference Tree (CIT). The difference between a CART and a CIT is that CITs use significance tests, e.g. the p-values, to select and split variables rather than some information measures like the Gini coefficient <span class="citation">(<a href="#ref-gries2021statistics" role="doc-biblioref">Gries 2021</a>)</span>.</p>
+<p>Like random forests, inference trees are non-parametric and thus do not rely on distributional requirements (or at least on fewer).</p>
+<div id="advantages" class="section level2 unnumbered hasAnchor">
+<h2>Advantages<a href="basics-of-tree-based-models.html#advantages" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Several advantages have been associated with using tree-based models:</p>
+<ol style="list-style-type: decimal">
+<li><p>Tree-structure models are very useful because they are <strong>extremely flexible</strong> as they can deal with different types of variables and provide a very good understanding of the structure in the data.</p></li>
+<li><p>Tree-structure models have been deemed particularly interesting for linguists because they can handle <strong>moderate sample sizes</strong> and many high-order interactions better then regression models.</p></li>
+<li><p>Tree-structure models are (supposedly) better at detecting <strong>non-linear or non-monotonic relationships</strong> between predictors and dependent variables. This also means that they are better at finding and displaying interaction sinvolving many predictors.</p></li>
+<li><p>Tree-structure models are <strong>easy</strong> to implement in R and do not require the model selection, validation, and diagnostics associated with regression models.</p></li>
+<li><p>Tree-structure models can be used as <strong>variable-selection</strong> procedure which informs about which variables have any sort of significant relationship with the dependent variable and can thereby inform model fitting.</p></li>
+</ol>
+</div>
+<div id="problems" class="section level2 unnumbered hasAnchor">
+<h2>Problems<a href="basics-of-tree-based-models.html#problems" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Despite these potential advantages, a word of warning is in order: <span class="citation">Gries (<a href="#ref-gries2021statistics" role="doc-biblioref">2021</a>)</span> admits that tree-based models can be very useful but there are some issues that but some serious short-comings of tree-structure models remain under-explored. For instance,</p>
+<ol style="list-style-type: decimal">
+<li><p>Forest-models (Random Forests and Boruta) only inform about the <strong>importance</strong> of a variable but not if the variable is important as a main effect or as part of interactions (or both)! The importance only shows that there is some important connection between the predictor and the dependent variable. While partial dependence plots (see <a href="https://christophm.github.io/interpretable-ml-book/pdp.html">here</a> for more information) offer a remedy for this shortcoming to a certain degree, regression models are still much better at dealing with this issue.</p></li>
+<li><p>Simple tree-structure models have been shown to fail in detecting the correct predictors if the variance is solely determined by a <strong>single interaction</strong> <span class="citation">(<a href="#ref-gries2021statistics" role="doc-biblioref">Gries 2021, chap. 7.3</a>)</span>. This failure is caused by the fact that the predictor used in the first split of a tree is selected as the one with the strongest main effect <span class="citation">(<a href="#ref-boulesteix2015interaction" role="doc-biblioref">Boulesteix et al. 2015, 344</a>)</span>. This issue can, however, be avoided by hard-coding the interactions as predictors plus using ensemble methods such as random forests rather than individual trees <span class="citation">(see <a href="#ref-gries2021statistics" role="doc-biblioref">Gries 2021, chap. 7.3</a>)</span>.</p></li>
+<li><p>Another shortcoming is that tree-structure models partition the data (rather than “fitting a line” through the data which can lead to more <strong>coarse-grained predictions</strong> compared to regression models when dealing with numeric dependent variables <span class="citation">(again, see <a href="#ref-gries2021statistics" role="doc-biblioref">Gries 2021, chap. 7.3</a>)</span>.</p></li>
+<li><p><span class="citation">Boulesteix et al. (<a href="#ref-boulesteix2015interaction" role="doc-biblioref">2015, 341</a>)</span> state that high correlations between predictors can hinder the <strong>detection of interactions</strong> when using small data sets. However, regression do not fare better here as they are even more strongly affected by (multi-)collinearity <span class="citation">(see <a href="#ref-gries2021statistics" role="doc-biblioref">Gries 2021, chap. 7.3</a>)</span>.</p></li>
+<li><p>Tree-structure models are bad a detecting interactions when the variables have <strong>strong main effects</strong> which is, unfortunately, common when dealing with linguistic data <span class="citation">(<a href="#ref-wrigt2016interac" role="doc-biblioref">Wright, Ziegler, and König 2016</a>)</span>.</p></li>
+<li><p>Tree-structure models cannot handle <strong>factorial variables</strong> with many levels (more than 53 levels) which is very common in linguistics where individual speakers or items are variables.</p></li>
+<li><p>Forest-models (Random Forests and Boruta) have been deemed to be better at dealing with small data sets. However, this is only because the analysis is based on <strong>permutations</strong> of the original small data set. As such, forest-based models only appear to be better at handling small data sets because they “blow up” the data set rather than really being better at analyzing the original data.</p></li>
+</ol>
+<p>Before we implement a conditional inference tree in R, we will have a look at how decision trees work. We will do this in more detail here as random forests and Boruta analyses are extensions of inference trees and are therefore based on the same concepts.</p>
+</div>
+<div id="classification-and-regression-trees" class="section level2 unnumbered hasAnchor">
+<h2>Classification And Regression Trees<a href="basics-of-tree-based-models.html#classification-and-regression-trees" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Below is an example of a decision tree which shows what what response to expect - in this case whether a speaker uses discourse <em>like</em> or not. Decision trees, like all CARTs and CITs, answer a simple question, namely <em>How do we best classify elements based on the given predictors?</em>. The answer that decision trees provide is the classification of the elements based on the levels of the predictors. In simple decision trees, all predictors, even those that are not significant are included in the decision tree. The decision tree shows that the best (or most important) predictor for the use of discourse <em>like</em> is age as it is the highest node. Among young speakers, those with high status use <em>like</em> more compared with speakers of lower social status. Among old speakers, women use discourse <em>like</em> more than men.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="basics-of-tree-based-models.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;tree&quot;</span>)</span>
+<span id="cb4-2"><a href="basics-of-tree-based-models.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;dplyr&quot;</span>)</span>
+<span id="cb4-3"><a href="basics-of-tree-based-models.html#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;grid&quot;</span>)</span>
+<span id="cb4-4"><a href="basics-of-tree-based-models.html#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;flextable&quot;</span>)</span>
+<span id="cb4-5"><a href="basics-of-tree-based-models.html#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;partykit&quot;</span>)</span>
+<span id="cb4-6"><a href="basics-of-tree-based-models.html#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;ggparty&quot;</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/cit1a-1.png" width="672" /></p>
+<p>The <em>yes</em> and <em>no</em> at the bottom show if the speaker should be classified as a user of discourse <em>like</em> (<em>yes</em> or <em>no</em>). Each split can be read as <em>true</em> to the left and <em>false</em> to the right. So that, at the first split, if the person is between the ages of 15 and 40, we need to follow the branch to the left while we need to follow to the right if the person is not 15 to 40.</p>
+<p>Before going through how this conditional decision tree is generated, let us first go over some basic concepts. The top of the decision tree is called <em>root</em> or <em>root node</em>, the categories at the end of branches are called <em>leaves</em> or <em>leaf nodes</em>. Nodes that are in-between the root and leaves are called <em>internal nodes</em> or just <em>nodes</em>. The root node has only arrows or lines pointing away from it, internal nodes have lines going to and from them, while leaf nodes only have lines pointing towards them.</p>
+<p>How to prune and evaluate the accuracy of decision trees is not shown here. If you are interested in this, please check out chapter 7 of <span class="citation">Gries (<a href="#ref-gries2021statistics" role="doc-biblioref">2021</a>)</span> which is a highly recommendable resource that provide a lot of additional information about decision trees and CARTs.</p>
+</div>
+<div id="tree-based-models-in-r" class="section level2 unnumbered hasAnchor">
+<h2>Tree-Based Models in R<a href="basics-of-tree-based-models.html#tree-based-models-in-r" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We will now focus on how to implement tree-based models in R and continue with getting a more detaled understanding og how tree-based methods work.</p>
+</div>
+<div id="how-tree-based-methods-work" class="section level2 unnumbered hasAnchor">
+<h2>How Tree-Based Methods Work<a href="basics-of-tree-based-models.html#how-tree-based-methods-work" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Let us now go over the process by which the decision tree above is generated. In our example, we want to predict whether a person makes use of discourse <em>like</em> given their age, gender, and social status.</p>
+<p>Let us now go over the process by which the decision tree above is generated. In our example, we want to predict whether a person makes use of discourse <em>like</em> given their age, gender, and social status.</p>
+<p>In a first step, we load and inspect the data that we will use in this tutorial. As tree-based models require either numeric or factorized data, we factorize the “character” variables in our data.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="basics-of-tree-based-models.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load data</span></span>
+<span id="cb5-2"><a href="basics-of-tree-based-models.html#cb5-2" aria-hidden="true" tabindex="-1"></a>citdata <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(<span class="st">&quot;https://slcladal.github.io/data/treedata.txt&quot;</span>, <span class="at">header =</span> T, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="basics-of-tree-based-models.html#cb5-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate_if</span>(is.character, factor)</span></code></pre></div>
+<template id="4a4f9e42-49ff-4dfc-8812-743bc45d31c4"><style>
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  border-color: transparent;
+  caption-side: top;
+}
+.tabwid-caption-bottom table{
+  caption-side: bottom;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td, .tabwid th {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+.katex-display {
+    margin: 0 0 !important;
+}
+</style><div class="tabwid"><style>.cl-31477910{table-layout:auto;width:75%;}.cl-313bba1c{font-family:'Arial';font-size:12pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-313bba26{font-family:'Arial';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-31409be0{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-3140bd50{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3140bd5a{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3140bd5b{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3140bd64{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3140bd6e{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3140bd6f{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3140bd78{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3140bd82{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3140bd83{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3140bd84{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3140bd8c{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3140bd96{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class='cl-31477910'>
+
+<caption>
+<span id="tab:cit4d">Table 1.1: </span><span>First 10 rows of the citdata data</span>
+</caption>
+
+<thead><tr style="overflow-wrap:break-word;"><th class="cl-3140bd50"><p class="cl-31409be0"><span class="cl-313bba1c">Age</span></p></th><th class="cl-3140bd5a"><p class="cl-31409be0"><span class="cl-313bba1c">Gender</span></p></th><th class="cl-3140bd5a"><p class="cl-31409be0"><span class="cl-313bba1c">Status</span></p></th><th class="cl-3140bd5b"><p class="cl-31409be0"><span class="cl-313bba1c">LikeUser</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-3140bd64"><p class="cl-31409be0"><span class="cl-313bba26">15-40</span></p></td><td class="cl-3140bd6e"><p class="cl-31409be0"><span class="cl-313bba26">female</span></p></td><td class="cl-3140bd6e"><p class="cl-31409be0"><span class="cl-313bba26">high</span></p></td><td class="cl-3140bd6f"><p class="cl-31409be0"><span class="cl-313bba26">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-3140bd78"><p class="cl-31409be0"><span class="cl-313bba26">15-40</span></p></td><td class="cl-3140bd82"><p class="cl-31409be0"><span class="cl-313bba26">female</span></p></td><td class="cl-3140bd82"><p class="cl-31409be0"><span class="cl-313bba26">high</span></p></td><td class="cl-3140bd83"><p class="cl-31409be0"><span class="cl-313bba26">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-3140bd64"><p class="cl-31409be0"><span class="cl-313bba26">15-40</span></p></td><td class="cl-3140bd6e"><p class="cl-31409be0"><span class="cl-313bba26">male</span></p></td><td class="cl-3140bd6e"><p class="cl-31409be0"><span class="cl-313bba26">high</span></p></td><td class="cl-3140bd6f"><p class="cl-31409be0"><span class="cl-313bba26">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-3140bd78"><p class="cl-31409be0"><span class="cl-313bba26">41-80</span></p></td><td class="cl-3140bd82"><p class="cl-31409be0"><span class="cl-313bba26">female</span></p></td><td class="cl-3140bd82"><p class="cl-31409be0"><span class="cl-313bba26">low</span></p></td><td class="cl-3140bd83"><p class="cl-31409be0"><span class="cl-313bba26">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-3140bd64"><p class="cl-31409be0"><span class="cl-313bba26">41-80</span></p></td><td class="cl-3140bd6e"><p class="cl-31409be0"><span class="cl-313bba26">male</span></p></td><td class="cl-3140bd6e"><p class="cl-31409be0"><span class="cl-313bba26">high</span></p></td><td class="cl-3140bd6f"><p class="cl-31409be0"><span class="cl-313bba26">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-3140bd78"><p class="cl-31409be0"><span class="cl-313bba26">41-80</span></p></td><td class="cl-3140bd82"><p class="cl-31409be0"><span class="cl-313bba26">male</span></p></td><td class="cl-3140bd82"><p class="cl-31409be0"><span class="cl-313bba26">low</span></p></td><td class="cl-3140bd83"><p class="cl-31409be0"><span class="cl-313bba26">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-3140bd64"><p class="cl-31409be0"><span class="cl-313bba26">41-80</span></p></td><td class="cl-3140bd6e"><p class="cl-31409be0"><span class="cl-313bba26">female</span></p></td><td class="cl-3140bd6e"><p class="cl-31409be0"><span class="cl-313bba26">low</span></p></td><td class="cl-3140bd6f"><p class="cl-31409be0"><span class="cl-313bba26">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-3140bd78"><p class="cl-31409be0"><span class="cl-313bba26">15-40</span></p></td><td class="cl-3140bd82"><p class="cl-31409be0"><span class="cl-313bba26">male</span></p></td><td class="cl-3140bd82"><p class="cl-31409be0"><span class="cl-313bba26">high</span></p></td><td class="cl-3140bd83"><p class="cl-31409be0"><span class="cl-313bba26">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-3140bd64"><p class="cl-31409be0"><span class="cl-313bba26">41-80</span></p></td><td class="cl-3140bd6e"><p class="cl-31409be0"><span class="cl-313bba26">male</span></p></td><td class="cl-3140bd6e"><p class="cl-31409be0"><span class="cl-313bba26">low</span></p></td><td class="cl-3140bd6f"><p class="cl-31409be0"><span class="cl-313bba26">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-3140bd84"><p class="cl-31409be0"><span class="cl-313bba26">41-80</span></p></td><td class="cl-3140bd8c"><p class="cl-31409be0"><span class="cl-313bba26">male</span></p></td><td class="cl-3140bd8c"><p class="cl-31409be0"><span class="cl-313bba26">low</span></p></td><td class="cl-3140bd96"><p class="cl-31409be0"><span class="cl-313bba26">no</span></p></td></tr></tbody></table></div></template>
+<div class="flextable-shadow-host" id="1c88ccf4-7c8b-4803-b25b-5f53d5f9dd71"></div>
+<script>
+var dest = document.getElementById("1c88ccf4-7c8b-4803-b25b-5f53d5f9dd71");
+var template = document.getElementById("4a4f9e42-49ff-4dfc-8812-743bc45d31c4");
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+</script>
+
+<p>The data now consists of factors which two levels each.</p>
+<p>The first step in generating a decision tree consists in determining, what the root of the decision tree should be. This means that we have to determine which of the variables represents the root node. In order to do so, we tabulate for each variable level, how many speakers of that level have used discourse <em>like</em> (LikeUsers) and how many have not used discourse <em>like</em> (NonLikeUsers).</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="basics-of-tree-based-models.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tabulate data</span></span>
+<span id="cb6-2"><a href="basics-of-tree-based-models.html#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(citdata<span class="sc">$</span>LikeUser, citdata<span class="sc">$</span>Gender)</span></code></pre></div>
+<pre><code>##      
+##       female male
+##   no      43   75
+##   yes     91   42</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="basics-of-tree-based-models.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(citdata<span class="sc">$</span>LikeUser, citdata<span class="sc">$</span>Age)</span></code></pre></div>
+<pre><code>##      
+##       15-40 41-80
+##   no     34    84
+##   yes    92    41</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="basics-of-tree-based-models.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(citdata<span class="sc">$</span>LikeUser, citdata<span class="sc">$</span>Status)</span></code></pre></div>
+<pre><code>##      
+##       high low
+##   no    33  85
+##   yes   73  60</code></pre>
+<p>None of the predictors is perfect (the predictors are therefore referred to as <em>impure</em>). To determine which variable is the root, we will calculate the degree of “impurity” for each variable - the variable which has the lowest impurity value will be the root.</p>
+<p>The most common measure of impurity in the context of conditional inference trees is called <em>Gini</em> (an alternative that is common when generating regression trees is the deviance). The Gini value or gini index was introduced by Corrado Gini as a measure for income inequality. In our case we seek to maximize inequality of distributions of leave nodes which is why the gini index is useful for tree based models. For each level we apply the following equation to determine the gini impurity value:</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{x} = 1 - ( p_{1} )^{2} - ( p_{0} )^{2}
+
+\end{equation}\]</span></p>
+<p>For the node for men, this would mean the following:</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{men} = 1-(\frac{42} {42+75})^{2} - (\frac{75} {42+75})^{2} = 0.4602235
+
+\end{equation}\]</span></p>
+<p>For women, we calculate G or Gini as follows:</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{women} = 1-(\frac{91} {91+43})^{2} - (\frac{43} {91+43})^{2} = 0.4358432
+
+\end{equation}\]</span></p>
+<p>To calculate the Gini value of Gender, we need to calculate the weighted average leaf node impurity (weighted because the number of speakers is different in each group). We calculate the weighted average leaf node impurity using the equation below.</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{Gender} = \frac{N_{men}} {N_{Total}} \times G_{men} +  \frac{N_{women}} {N_{Total}} \times G_{women}
+
+G_{Gender} = \frac{159} {303} \times 0.4602235 +  \frac{144} {303} \times 0.4358432 = 0.4611915
+
+\end{equation}\]</span></p>
+<p>We will now perform the gini-calculation for gender (see below).</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="basics-of-tree-based-models.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for men</span></span>
+<span id="cb12-2"><a href="basics-of-tree-based-models.html#cb12-2" aria-hidden="true" tabindex="-1"></a>gini_men <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(<span class="dv">42</span><span class="sc">/</span>(<span class="dv">42</span><span class="sc">+</span><span class="dv">75</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">75</span><span class="sc">/</span>(<span class="dv">42</span><span class="sc">+</span><span class="dv">75</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb12-3"><a href="basics-of-tree-based-models.html#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for women</span></span>
+<span id="cb12-4"><a href="basics-of-tree-based-models.html#cb12-4" aria-hidden="true" tabindex="-1"></a>gini_women <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(<span class="dv">91</span><span class="sc">/</span>(<span class="dv">91</span><span class="sc">+</span><span class="dv">43</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">43</span><span class="sc">/</span>(<span class="dv">91</span><span class="sc">+</span><span class="dv">43</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb12-5"><a href="basics-of-tree-based-models.html#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate weighted average of Gini for Gender</span></span>
+<span id="cb12-6"><a href="basics-of-tree-based-models.html#cb12-6" aria-hidden="true" tabindex="-1"></a>gini_gender <span class="ot">&lt;-</span> <span class="dv">42</span><span class="sc">/</span>(<span class="dv">42</span><span class="sc">+</span><span class="dv">75</span>)<span class="sc">*</span> gini_men <span class="sc">+</span>  <span class="dv">91</span><span class="sc">/</span>(<span class="dv">91</span><span class="sc">+</span><span class="dv">43</span>) <span class="sc">*</span> gini_women</span>
+<span id="cb12-7"><a href="basics-of-tree-based-models.html#cb12-7" aria-hidden="true" tabindex="-1"></a>gini_gender</span></code></pre></div>
+<pre><code>## [1] 0.4611915</code></pre>
+<p>The gini for gender is 0.4612. In a next step, we revisit the age distribution and we continue to calculate the gini value for age.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="basics-of-tree-based-models.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for age groups</span></span>
+<span id="cb14-2"><a href="basics-of-tree-based-models.html#cb14-2" aria-hidden="true" tabindex="-1"></a>gini_young <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(<span class="dv">92</span><span class="sc">/</span>(<span class="dv">92</span><span class="sc">+</span><span class="dv">34</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">34</span><span class="sc">/</span>(<span class="dv">92</span><span class="sc">+</span><span class="dv">34</span>))<span class="sc">^</span><span class="dv">2</span>  <span class="co"># Gini: young</span></span>
+<span id="cb14-3"><a href="basics-of-tree-based-models.html#cb14-3" aria-hidden="true" tabindex="-1"></a>gini_old <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(<span class="dv">41</span><span class="sc">/</span>(<span class="dv">41</span><span class="sc">+</span><span class="dv">84</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">84</span><span class="sc">/</span>(<span class="dv">41</span><span class="sc">+</span><span class="dv">84</span>))<span class="sc">^</span><span class="dv">2</span>    <span class="co"># Gini: old</span></span>
+<span id="cb14-4"><a href="basics-of-tree-based-models.html#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate weighted average of Gini for Age</span></span>
+<span id="cb14-5"><a href="basics-of-tree-based-models.html#cb14-5" aria-hidden="true" tabindex="-1"></a>gini_age <span class="ot">&lt;-</span> <span class="dv">92</span><span class="sc">/</span>(<span class="dv">92</span><span class="sc">+</span><span class="dv">34</span>)<span class="sc">*</span> gini_young <span class="sc">+</span>  <span class="dv">41</span><span class="sc">/</span>(<span class="dv">41</span><span class="sc">+</span><span class="dv">84</span>) <span class="sc">*</span> gini_old</span>
+<span id="cb14-6"><a href="basics-of-tree-based-models.html#cb14-6" aria-hidden="true" tabindex="-1"></a>gini_age</span></code></pre></div>
+<pre><code>## [1] 0.4323148</code></pre>
+<p>The gini for age is .4323 and we continue by revisiting the status distribution and we continue to calculate the gini value for status.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="basics-of-tree-based-models.html#cb16-1" aria-hidden="true" tabindex="-1"></a>gini_high <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(<span class="dv">73</span><span class="sc">/</span>(<span class="dv">33</span><span class="sc">+</span><span class="dv">73</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">33</span><span class="sc">/</span>(<span class="dv">33</span><span class="sc">+</span><span class="dv">73</span>))<span class="sc">^</span><span class="dv">2</span>   <span class="co"># Gini: high</span></span>
+<span id="cb16-2"><a href="basics-of-tree-based-models.html#cb16-2" aria-hidden="true" tabindex="-1"></a>gini_low <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(<span class="dv">60</span><span class="sc">/</span>(<span class="dv">60</span><span class="sc">+</span><span class="dv">85</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">85</span><span class="sc">/</span>(<span class="dv">60</span><span class="sc">+</span><span class="dv">85</span>))<span class="sc">^</span><span class="dv">2</span>    <span class="co"># Gini: low</span></span>
+<span id="cb16-3"><a href="basics-of-tree-based-models.html#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate weighted average of Gini for Status</span></span>
+<span id="cb16-4"><a href="basics-of-tree-based-models.html#cb16-4" aria-hidden="true" tabindex="-1"></a>gini_status <span class="ot">&lt;-</span> <span class="dv">73</span><span class="sc">/</span>(<span class="dv">33</span><span class="sc">+</span><span class="dv">73</span>)<span class="sc">*</span> gini_high <span class="sc">+</span>  <span class="dv">60</span><span class="sc">/</span>(<span class="dv">60</span><span class="sc">+</span><span class="dv">85</span>) <span class="sc">*</span> gini_low</span>
+<span id="cb16-5"><a href="basics-of-tree-based-models.html#cb16-5" aria-hidden="true" tabindex="-1"></a>gini_status</span></code></pre></div>
+<pre><code>## [1] 0.4960521</code></pre>
+<p>The gini for status is .4961 and we can now compare the gini values for age, gender, and status.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="basics-of-tree-based-models.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare age, gender, and status ginis</span></span>
+<span id="cb18-2"><a href="basics-of-tree-based-models.html#cb18-2" aria-hidden="true" tabindex="-1"></a>gini_age; gini_gender; gini_status</span></code></pre></div>
+<pre><code>## [1] 0.4323148</code></pre>
+<pre><code>## [1] 0.4611915</code></pre>
+<pre><code>## [1] 0.4960521</code></pre>
+<p>Since age has the lowest gini (impurity) value, our first split is by age and age, thus, represents our root node. Our manually calculated conditional inference tree right now looks as below.</p>
+<p><img src="bookdownproj_files/figure-html/cit13-1.png" width="672" /></p>
+<p>In a next step, we need to find out which of the remaining variables best separates the speakers who use discourse <em>like</em> from those that do not under the first node. In order to do so, we calculate the Gini values for <em>Gender</em> and <em>SocialStatus</em> for the <em>15-40</em> node.</p>
+<p>We thus move on and test if and how to split this branch.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="basics-of-tree-based-models.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 5TH NODE</span></span>
+<span id="cb22-2"><a href="basics-of-tree-based-models.html#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># split data according to first split (only young data)</span></span>
+<span id="cb22-3"><a href="basics-of-tree-based-models.html#cb22-3" aria-hidden="true" tabindex="-1"></a>young <span class="ot">&lt;-</span> citdata <span class="sc">%&gt;%</span></span>
+<span id="cb22-4"><a href="basics-of-tree-based-models.html#cb22-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(Age <span class="sc">==</span> <span class="st">&quot;15-40&quot;</span>)</span>
+<span id="cb22-5"><a href="basics-of-tree-based-models.html#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># inspect distribution</span></span>
+<span id="cb22-6"><a href="basics-of-tree-based-models.html#cb22-6" aria-hidden="true" tabindex="-1"></a>tbyounggender <span class="ot">&lt;-</span> <span class="fu">table</span>(young<span class="sc">$</span>LikeUser, young<span class="sc">$</span>Gender)</span>
+<span id="cb22-7"><a href="basics-of-tree-based-models.html#cb22-7" aria-hidden="true" tabindex="-1"></a>tbyounggender</span></code></pre></div>
+<pre><code>##      
+##       female male
+##   no      17   17
+##   yes     58   34</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="basics-of-tree-based-models.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for Gender</span></span>
+<span id="cb24-2"><a href="basics-of-tree-based-models.html#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for men</span></span>
+<span id="cb24-3"><a href="basics-of-tree-based-models.html#cb24-3" aria-hidden="true" tabindex="-1"></a>gini_youngmen <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(tbyounggender[<span class="dv">2</span>,<span class="dv">2</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyounggender[,<span class="dv">2</span>]))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (tbyounggender[<span class="dv">1</span>,<span class="dv">2</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyounggender[,<span class="dv">2</span>]))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb24-4"><a href="basics-of-tree-based-models.html#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for women</span></span>
+<span id="cb24-5"><a href="basics-of-tree-based-models.html#cb24-5" aria-hidden="true" tabindex="-1"></a>gini_youngwomen <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(tbyounggender[<span class="dv">2</span>,<span class="dv">1</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyounggender[,<span class="dv">1</span>]))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (tbyounggender[<span class="dv">1</span>,<span class="dv">1</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyounggender[,<span class="dv">1</span>]))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb24-6"><a href="basics-of-tree-based-models.html#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co"># # calculate weighted average of Gini for Gender</span></span>
+<span id="cb24-7"><a href="basics-of-tree-based-models.html#cb24-7" aria-hidden="true" tabindex="-1"></a>gini_younggender <span class="ot">&lt;-</span> <span class="fu">sum</span>(tbyounggender[,<span class="dv">2</span>])<span class="sc">/</span><span class="fu">sum</span>(tbyounggender)<span class="sc">*</span> gini_youngmen <span class="sc">+</span>  <span class="fu">sum</span>(tbyounggender[,<span class="dv">1</span>])<span class="sc">/</span><span class="fu">sum</span>(tbyounggender) <span class="sc">*</span> gini_youngwomen</span>
+<span id="cb24-8"><a href="basics-of-tree-based-models.html#cb24-8" aria-hidden="true" tabindex="-1"></a>gini_younggender</span></code></pre></div>
+<pre><code>## [1] 0.3885714</code></pre>
+<p>The gini value for gender among young speakers is 0.3886.</p>
+<p>We continue by inspecting the status distribution.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="basics-of-tree-based-models.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for Status</span></span>
+<span id="cb26-2"><a href="basics-of-tree-based-models.html#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># inspect distribution</span></span>
+<span id="cb26-3"><a href="basics-of-tree-based-models.html#cb26-3" aria-hidden="true" tabindex="-1"></a>tbyoungstatus <span class="ot">&lt;-</span> <span class="fu">table</span>(young<span class="sc">$</span>LikeUser, young<span class="sc">$</span>Status)</span>
+<span id="cb26-4"><a href="basics-of-tree-based-models.html#cb26-4" aria-hidden="true" tabindex="-1"></a>tbyoungstatus</span></code></pre></div>
+<pre><code>##      
+##       high low
+##   no    11  23
+##   yes   57  35</code></pre>
+<p>We now calculate the gini value for status.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="basics-of-tree-based-models.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for status</span></span>
+<span id="cb28-2"><a href="basics-of-tree-based-models.html#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for low</span></span>
+<span id="cb28-3"><a href="basics-of-tree-based-models.html#cb28-3" aria-hidden="true" tabindex="-1"></a>gini_younglow <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(tbyoungstatus[<span class="dv">2</span>,<span class="dv">2</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyoungstatus[,<span class="dv">2</span>]))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (tbyoungstatus[<span class="dv">1</span>,<span class="dv">2</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyoungstatus[,<span class="dv">2</span>]))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-4"><a href="basics-of-tree-based-models.html#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for high</span></span>
+<span id="cb28-5"><a href="basics-of-tree-based-models.html#cb28-5" aria-hidden="true" tabindex="-1"></a>gini_younghigh <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(tbyoungstatus[<span class="dv">2</span>,<span class="dv">1</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyoungstatus[,<span class="dv">1</span>]))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (tbyoungstatus[<span class="dv">1</span>,<span class="dv">1</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyoungstatus[,<span class="dv">1</span>]))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-6"><a href="basics-of-tree-based-models.html#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co"># # calculate weighted average of Gini for status</span></span>
+<span id="cb28-7"><a href="basics-of-tree-based-models.html#cb28-7" aria-hidden="true" tabindex="-1"></a>gini_youngstatus <span class="ot">&lt;-</span> <span class="fu">sum</span>(tbyoungstatus[,<span class="dv">2</span>])<span class="sc">/</span><span class="fu">sum</span>(tbyoungstatus)<span class="sc">*</span> gini_younglow <span class="sc">+</span>  <span class="fu">sum</span>(tbyoungstatus[,<span class="dv">1</span>])<span class="sc">/</span><span class="fu">sum</span>(tbyoungstatus) <span class="sc">*</span> gini_younghigh</span>
+<span id="cb28-8"><a href="basics-of-tree-based-models.html#cb28-8" aria-hidden="true" tabindex="-1"></a>gini_youngstatus</span></code></pre></div>
+<pre><code>## [1] 0.3666651</code></pre>
+<p>Since the gini value for status (0.3667) is lower than the gini value for gender (0.3886), we split by status.</p>
+<p>We would continue to calculate the gini values and always split at the lowest gini levels until we reach a leaf node. Then, we would continue doing the same for the remaining branches until the entire data is binned into different leaf nodes.</p>
+<p>In addition to plotting the decision tree, we can also check its accuracy. To do so, we predict the use of <em>like</em> based on the decision tree and compare them to the observed uses of <em>like</em>. Then we use the <code>confusionMatrix</code> function from the <code>caret</code> package to get an overview of the accuracy statistics.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="basics-of-tree-based-models.html#cb30-1" aria-hidden="true" tabindex="-1"></a>dtreeprediction <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">ifelse</span>(<span class="fu">predict</span>(dtree)[,<span class="dv">2</span>] <span class="sc">&gt;</span> .<span class="dv">5</span>, <span class="st">&quot;yes&quot;</span>, <span class="st">&quot;no&quot;</span>))</span>
+<span id="cb30-2"><a href="basics-of-tree-based-models.html#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(dtreeprediction, citdata<span class="sc">$</span>LikeUser)</span></code></pre></div>
+<p>The conditional inference tree has an accuracy of 72.9 percent which is significantly better than the base-line accuracy of 53.0 percent (No Information Rate <span class="math inline">\(*\)</span> 100). To understand what the other statistics refer to and how they are calculated, run the command <code>?confusionMatrix</code>.</p>
+</div>
+<div id="splitting-numeric-ordinal-and-true-categorical-variables" class="section level2 unnumbered hasAnchor">
+<h2>Splitting numeric, ordinal, and true categorical variables<a href="basics-of-tree-based-models.html#splitting-numeric-ordinal-and-true-categorical-variables" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>While it is rather straight forward to calculate the Gini values for categorical variables, it may not seem quite as apparent how to calculate splits for numeric or ordinal variables. To illustrate how the algorithm works on such variables, consider the example data set shown below.</p>
+<template id="92bf5b17-023d-4f14-95ab-bcbf0fafc4a6"><style>
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  border-color: transparent;
+  caption-side: top;
+}
+.tabwid-caption-bottom table{
+  caption-side: bottom;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td, .tabwid th {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+.katex-display {
+    margin: 0 0 !important;
+}
+</style><div class="tabwid"><style>.cl-3279513c{table-layout:auto;width:75%;}.cl-326c1ca6{font-family:'Arial';font-size:12pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-326c1cb0{font-family:'Arial';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-32717764{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-3271776e{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-32719492{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3271949c{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3271949d{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-327194a6{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-327194b0{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-327194ba{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-327194bb{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-327194bc{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class='cl-3279513c'>
+
+<caption>
+<span id="tab:tb1">Table 1.2: </span><span>First 10 rows of the citdata2 data.</span>
+</caption>
+
+<thead><tr style="overflow-wrap:break-word;"><th class="cl-32719492"><p class="cl-32717764"><span class="cl-326c1ca6">Age</span></p></th><th class="cl-3271949c"><p class="cl-3271776e"><span class="cl-326c1ca6">LikeUser</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-3271949d"><p class="cl-32717764"><span class="cl-326c1cb0">15</span></p></td><td class="cl-327194a6"><p class="cl-3271776e"><span class="cl-326c1cb0">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-327194b0"><p class="cl-32717764"><span class="cl-326c1cb0">37</span></p></td><td class="cl-327194ba"><p class="cl-3271776e"><span class="cl-326c1cb0">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-3271949d"><p class="cl-32717764"><span class="cl-326c1cb0">63</span></p></td><td class="cl-327194a6"><p class="cl-3271776e"><span class="cl-326c1cb0">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-327194b0"><p class="cl-32717764"><span class="cl-326c1cb0">42</span></p></td><td class="cl-327194ba"><p class="cl-3271776e"><span class="cl-326c1cb0">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-3271949d"><p class="cl-32717764"><span class="cl-326c1cb0">22</span></p></td><td class="cl-327194a6"><p class="cl-3271776e"><span class="cl-326c1cb0">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-327194bb"><p class="cl-32717764"><span class="cl-326c1cb0">27</span></p></td><td class="cl-327194bc"><p class="cl-3271776e"><span class="cl-326c1cb0">yes</span></p></td></tr></tbody></table></div></template>
+<div class="flextable-shadow-host" id="9faafb4b-f89a-4d66-9f1f-c1f8c3796d27"></div>
+<script>
+var dest = document.getElementById("9faafb4b-f89a-4d66-9f1f-c1f8c3796d27");
+var template = document.getElementById("92bf5b17-023d-4f14-95ab-bcbf0fafc4a6");
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+</script>
+
+<p>In a first step, we order the numeric variable so that we arrive at the following table.</p>
+<template id="bfc01079-2cfc-4418-b975-a5d20d279e12"><style>
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  border-color: transparent;
+  caption-side: top;
+}
+.tabwid-caption-bottom table{
+  caption-side: bottom;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td, .tabwid th {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+.katex-display {
+    margin: 0 0 !important;
+}
+</style><div class="tabwid"><style>.cl-32a603ee{table-layout:auto;width:75%;}.cl-32964760{font-family:'Arial';font-size:12pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-32964774{font-family:'Arial';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-329b8662{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-329b8680{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-329be90e{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-329be918{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-329be922{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-329be92c{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-329be92d{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-329be936{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-329be940{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-329be941{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class='cl-32a603ee'>
+
+<caption>
+<span id="tab:tb2">Table 1.3: </span><span>First 10 rows of the citdata2 data arranged by age.</span>
+</caption>
+
+<thead><tr style="overflow-wrap:break-word;"><th class="cl-329be90e"><p class="cl-329b8662"><span class="cl-32964760">Age</span></p></th><th class="cl-329be918"><p class="cl-329b8680"><span class="cl-32964760">LikeUser</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-329be922"><p class="cl-329b8662"><span class="cl-32964774">15</span></p></td><td class="cl-329be92c"><p class="cl-329b8680"><span class="cl-32964774">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-329be92d"><p class="cl-329b8662"><span class="cl-32964774">22</span></p></td><td class="cl-329be936"><p class="cl-329b8680"><span class="cl-32964774">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-329be922"><p class="cl-329b8662"><span class="cl-32964774">27</span></p></td><td class="cl-329be92c"><p class="cl-329b8680"><span class="cl-32964774">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-329be92d"><p class="cl-329b8662"><span class="cl-32964774">37</span></p></td><td class="cl-329be936"><p class="cl-329b8680"><span class="cl-32964774">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-329be922"><p class="cl-329b8662"><span class="cl-32964774">42</span></p></td><td class="cl-329be92c"><p class="cl-329b8680"><span class="cl-32964774">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-329be940"><p class="cl-329b8662"><span class="cl-32964774">63</span></p></td><td class="cl-329be941"><p class="cl-329b8680"><span class="cl-32964774">no</span></p></td></tr></tbody></table></div></template>
+<div class="flextable-shadow-host" id="3f5a2930-5c96-47f8-b7a6-934e44f7550a"></div>
+<script>
+var dest = document.getElementById("3f5a2930-5c96-47f8-b7a6-934e44f7550a");
+var template = document.getElementById("bfc01079-2cfc-4418-b975-a5d20d279e12");
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+</script>
+
+<p>Next, we calculate the means for each level of “Age”.</p>
+<template id="a2a45fe5-43d8-452e-97b6-85775ba1957d"><style>
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  border-color: transparent;
+  caption-side: top;
+}
+.tabwid-caption-bottom table{
+  caption-side: bottom;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td, .tabwid th {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+.katex-display {
+    margin: 0 0 !important;
+}
+</style><div class="tabwid"><style>.cl-32c92b80{table-layout:auto;width:75%;}.cl-32bd2312{font-family:'Arial';font-size:12pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-32bd231c{font-family:'Arial';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-32c1b3be{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-32c1b3c8{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-32c1d07e{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32c1d088{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32c1d089{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32c1d092{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32c1d093{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32c1d09c{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32c1d09d{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32c1d0a6{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class='cl-32c92b80'>
+
+<caption>
+<span id="tab:citn3b">Table 1.4: </span><span>First 10 rows of the citdata3 data arranged by age.</span>
+</caption>
+
+<thead><tr style="overflow-wrap:break-word;"><th class="cl-32c1d07e"><p class="cl-32c1b3be"><span class="cl-32bd2312">Age</span></p></th><th class="cl-32c1d088"><p class="cl-32c1b3c8"><span class="cl-32bd2312">LikeUser</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-32c1d089"><p class="cl-32c1b3be"><span class="cl-32bd231c">15.0</span></p></td><td class="cl-32c1d092"><p class="cl-32c1b3c8"><span class="cl-32bd231c">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-32c1d093"><p class="cl-32c1b3be"><span class="cl-32bd231c">18.5</span></p></td><td class="cl-32c1d09c"><p class="cl-32c1b3c8"><span class="cl-32bd231c"></span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-32c1d089"><p class="cl-32c1b3be"><span class="cl-32bd231c">22.0</span></p></td><td class="cl-32c1d092"><p class="cl-32c1b3c8"><span class="cl-32bd231c">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-32c1d093"><p class="cl-32c1b3be"><span class="cl-32bd231c">24.5</span></p></td><td class="cl-32c1d09c"><p class="cl-32c1b3c8"><span class="cl-32bd231c"></span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-32c1d089"><p class="cl-32c1b3be"><span class="cl-32bd231c">27.0</span></p></td><td class="cl-32c1d092"><p class="cl-32c1b3c8"><span class="cl-32bd231c">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-32c1d093"><p class="cl-32c1b3be"><span class="cl-32bd231c">32.0</span></p></td><td class="cl-32c1d09c"><p class="cl-32c1b3c8"><span class="cl-32bd231c"></span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-32c1d089"><p class="cl-32c1b3be"><span class="cl-32bd231c">37.0</span></p></td><td class="cl-32c1d092"><p class="cl-32c1b3c8"><span class="cl-32bd231c">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-32c1d093"><p class="cl-32c1b3be"><span class="cl-32bd231c">39.5</span></p></td><td class="cl-32c1d09c"><p class="cl-32c1b3c8"><span class="cl-32bd231c"></span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-32c1d089"><p class="cl-32c1b3be"><span class="cl-32bd231c">42.0</span></p></td><td class="cl-32c1d092"><p class="cl-32c1b3c8"><span class="cl-32bd231c">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-32c1d09d"><p class="cl-32c1b3be"><span class="cl-32bd231c">52.5</span></p></td><td class="cl-32c1d0a6"><p class="cl-32c1b3c8"><span class="cl-32bd231c"></span></p></td></tr></tbody></table></div></template>
+<div class="flextable-shadow-host" id="666e2218-a0a7-4a3d-965a-2953f5285d18"></div>
+<script>
+var dest = document.getElementById("666e2218-a0a7-4a3d-965a-2953f5285d18");
+var template = document.getElementById("a2a45fe5-43d8-452e-97b6-85775ba1957d");
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+</script>
+
+<p>Now, we calculate the Gini values for each average level of age. How this is done is shown below for the first split.</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{x} = 1 - ( p_{1} )^{2} - ( p_{0} )^{2}
+
+\end{equation}\]</span></p>
+<p>For an age smaller than 18.5 this would mean:</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{youngerthan18.5} = 1-(\frac{1} {1+0})^{2} - (\frac{0} {1+0})^{2} = 0.0
+
+\end{equation}\]</span></p>
+<p>For an age greater than 18.5, we calculate G or Gini as follows:</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{olerthan18.5} = 1-(\frac{2} {2+3})^{2} - (\frac{3} {2+3})^{2} = 0.48
+
+\end{equation}\]</span></p>
+<p>Now, we calculate the Gini for that split as we have done above.</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{split18.5} = \frac{N_{youngerthan18.5}} {N_{Total}} \times G_{youngerthan18.5} +  \frac{N_{olderthan18.5}} {N_{Total}} \times G_{olderthan18.5}
+
+G_{split18.5} = \frac{1} {6} \times 0.0 +  \frac{5} {6} \times 0.48 = 0.4
+
+\end{equation}\]</span></p>
+<p>We then have to calculate the gini values for all possible age splits which yields the following results:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="basics-of-tree-based-models.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 18.5</span></span>
+<span id="cb31-2"><a href="basics-of-tree-based-models.html#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="dv">0</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">0</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="dv">0</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb31-3"><a href="basics-of-tree-based-models.html#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">2</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">+</span><span class="dv">3</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">3</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">+</span><span class="dv">3</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb31-4"><a href="basics-of-tree-based-models.html#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.0</span> <span class="sc">+</span>  <span class="dv">5</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.48</span></span>
+<span id="cb31-5"><a href="basics-of-tree-based-models.html#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 24.4</span></span>
+<span id="cb31-6"><a href="basics-of-tree-based-models.html#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">2</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">+</span><span class="dv">0</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">0</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">+</span><span class="dv">0</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb31-7"><a href="basics-of-tree-based-models.html#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">3</span><span class="sc">/</span>(<span class="dv">3</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">2</span><span class="sc">/</span>(<span class="dv">3</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb31-8"><a href="basics-of-tree-based-models.html#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.0</span> <span class="sc">+</span>  <span class="dv">4</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.1875</span></span>
+<span id="cb31-9"><a href="basics-of-tree-based-models.html#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 32</span></span>
+<span id="cb31-10"><a href="basics-of-tree-based-models.html#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">3</span><span class="sc">/</span>(<span class="dv">3</span><span class="sc">+</span><span class="dv">0</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">0</span><span class="sc">/</span>(<span class="dv">3</span><span class="sc">+</span><span class="dv">0</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb31-11"><a href="basics-of-tree-based-models.html#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="dv">2</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">2</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="dv">2</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb31-12"><a href="basics-of-tree-based-models.html#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="dv">3</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.0</span> <span class="sc">+</span>  <span class="dv">3</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.4444444</span></span>
+<span id="cb31-13"><a href="basics-of-tree-based-models.html#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 39.5</span></span>
+<span id="cb31-14"><a href="basics-of-tree-based-models.html#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">3</span><span class="sc">/</span>(<span class="dv">3</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>(<span class="dv">3</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb31-15"><a href="basics-of-tree-based-models.html#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb31-16"><a href="basics-of-tree-based-models.html#cb31-16" aria-hidden="true" tabindex="-1"></a><span class="dv">4</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.375</span> <span class="sc">+</span>  <span class="dv">2</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.5</span></span>
+<span id="cb31-17"><a href="basics-of-tree-based-models.html#cb31-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 52.5</span></span>
+<span id="cb31-18"><a href="basics-of-tree-based-models.html#cb31-18" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">4</span><span class="sc">/</span>(<span class="dv">4</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>(<span class="dv">4</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb31-19"><a href="basics-of-tree-based-models.html#cb31-19" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">0</span><span class="sc">/</span>(<span class="dv">0</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>(<span class="dv">0</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb31-20"><a href="basics-of-tree-based-models.html#cb31-20" aria-hidden="true" tabindex="-1"></a><span class="dv">5</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.32</span> <span class="sc">+</span>  <span class="dv">1</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.0</span></span></code></pre></div>
+<template id="921fdfa8-3e7f-4b9d-bb4c-725ac178792e"><style>
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  border-color: transparent;
+  caption-side: top;
+}
+.tabwid-caption-bottom table{
+  caption-side: bottom;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td, .tabwid th {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+.katex-display {
+    margin: 0 0 !important;
+}
+</style><div class="tabwid"><style>.cl-32f295b0{table-layout:auto;width:75%;}.cl-32e6b6b4{font-family:'Arial';font-size:12pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-32e6b6c8{font-family:'Arial';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-32eb9030{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-32ec1028{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32ec1032{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32ec1033{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32ec103c{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32ec103d{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32ec103e{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32ec1046{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-32ec1047{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class='cl-32f295b0'>
+
+<caption>
+<span id="tab:tb3">Table 1.5: </span><span>First 10 rows of the citdata3 data with Gini coefficients.</span>
+</caption>
+
+<thead><tr style="overflow-wrap:break-word;"><th class="cl-32ec1028"><p class="cl-32eb9030"><span class="cl-32e6b6b4">AgeSplit</span></p></th><th class="cl-32ec1032"><p class="cl-32eb9030"><span class="cl-32e6b6b4">Gini</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-32ec1033"><p class="cl-32eb9030"><span class="cl-32e6b6c8">18.5</span></p></td><td class="cl-32ec103c"><p class="cl-32eb9030"><span class="cl-32e6b6c8">0.400</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-32ec103d"><p class="cl-32eb9030"><span class="cl-32e6b6c8">24.5</span></p></td><td class="cl-32ec103e"><p class="cl-32eb9030"><span class="cl-32e6b6c8">0.500</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-32ec1033"><p class="cl-32eb9030"><span class="cl-32e6b6c8">32.0</span></p></td><td class="cl-32ec103c"><p class="cl-32eb9030"><span class="cl-32e6b6c8">0.444</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-32ec103d"><p class="cl-32eb9030"><span class="cl-32e6b6c8">39.5</span></p></td><td class="cl-32ec103e"><p class="cl-32eb9030"><span class="cl-32e6b6c8">0.410</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-32ec1046"><p class="cl-32eb9030"><span class="cl-32e6b6c8">52.5</span></p></td><td class="cl-32ec1047"><p class="cl-32eb9030"><span class="cl-32e6b6c8">0.267</span></p></td></tr></tbody></table></div></template>
+<div class="flextable-shadow-host" id="8e9cc0e6-3cc2-428a-af82-5475483b9192"></div>
+<script>
+var dest = document.getElementById("8e9cc0e6-3cc2-428a-af82-5475483b9192");
+var template = document.getElementById("921fdfa8-3e7f-4b9d-bb4c-725ac178792e");
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+</script>
+
+<p>The split at 52.5 years of age has the lowest Gini value. Accordingly, we would split the data between speakers who are younger than 52.5 and speakers who are older than 52.5 years of age. The lowest Gini value for any age split would also be the Gini value that would be compared to other variables.</p>
+<p>The same procedure that we have used to determine potential splits for a numeric variable would apply to an ordinal variable with only two differences:</p>
+<ul>
+<li>The Gini values are calculated for the actual levels and not the means between variable levels.</li>
+<li>The Gini value is nor calculated for the lowest and highest level as the calculation of the Gini values is impossible for extreme values. Extreme levels can, therefore, not serve as a potential split location.</li>
+</ul>
+<p>When dealing with categorical variables with more than two levels, the situation is slightly more complex as we would also have to calculate the Gini values for combinations of variable levels. While the calculations are, in principle, analogous to the ones performed for binary of nominal categorical variables, we would also have to check if combinations would lead to improved splits. For instance, imagine we have a variable with categories A, B, and C. In such cases we would not only have to calculate the Gini scores for A, B, and C but also for A plus B, A plus C, and B plus C. Note that we ignore the combination A plus B plus C as this combination would include all other potential combinations.</p>
+<hr />
+<p><a href="https://github.com/MartinSchweinberger/TreesUBonn">Back to the workshop repo</a></p>
+<hr />
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-boulesteix2015interaction" class="csl-entry">
+Boulesteix, Anne-Laure, Silke Janitza, Alexander Hapfelmeier, Kristel Van Steen, and Carolin Strobl. 2015. <span>“Letter to the Editor: On the Term <span>‘Interaction’</span> and Related Phrases in the Literature on RandomForests.”</span> <em>Briefings in Bioinformatics</em> 16 (2): 338–45. <a href="https://academic.oup.com/bib/article/16/2/338/246566">https://academic.oup.com/bib/article/16/2/338/246566</a>.
+</div>
+<div id="ref-gries2021statistics" class="csl-entry">
+Gries, Stefan Th. 2021. <em>Statistics for Linguistics Using r: A Practical Introduction</em>. Berlin &amp; New York: Mouton de Gruyter.
+</div>
+<div id="ref-wrigt2016interac" class="csl-entry">
+Wright, Marvin N., Andreas Ziegler, and Inke R. König. 2016. <span>“Do Little Interactions Get Lost in Dark Random Forests?”</span> 17 (145). <a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-0995-8">https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-0995-8</a>.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="conditional-inference-trees.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/MartinSchweinberger/TreesUBonn/edit/master/01-basics.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/MartinSchweinberger/TreesUBonn/blob/master/01-basics.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

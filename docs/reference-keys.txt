@@ -6,7 +6,5 @@ tab:tb3
 introduction
 about-me
 about-the-workshop
-advantages
-what-are-tree-based-models-and-how-do-they-work
 conditional-inference-trees
 practice
