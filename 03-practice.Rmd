@@ -1,5 +1,8 @@
-# Practice
+# Practice {-}
 
+To see how to implement a conditional inference tree, we will use a Jupyter notebook made available to everyone on Google Colab. 
+
+Please just follow the link provided below to open the Jupyter notebook.
 
 <div class="warning" style='padding:0.1em; background-color:#f2f2f2; color:#51247a'>
 <span>

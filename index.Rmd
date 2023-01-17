@@ -9,7 +9,7 @@ biblio-style: apalike
 link-citations: yes
 ---
 
-# Introduction
+# Introduction {-}
 
 This workshop focuses on conditional inference trees and their implementation in R.
 
@@ -17,7 +17,7 @@ This workshop focuses on conditional inference trees and their implementation in
 knitr::include_graphics("https://slcladal.github.io/images/martinsface.jpg")
 ```
 
-## About me
+## About me {-}
 
 Quantitative corpus-linguist  
 
@@ -35,7 +35,7 @@ Quantitative corpus-linguist
 Studied Philosophy, English Philology and Psychology in Kassel and Galway
 PhD in Hamburg, Post docs (or similar positions) at the Linguistic Diversity in Urban Areas Excellence Cluster (LiMA), the FU Berlin, the Universities of Greifswald, Luneburg, and Kassel
 
-## About the workshop
+## About the workshop {-}
 
 Timeline | Table of Contents
 * Introduction  
@@ -51,7 +51,7 @@ During practice, we will use a Jupyter notebook and you can
 
 ## Citation & Session Info {-}
 
-Schweinberger, Martin. 2023. *An introduction to conditional inference trees in R*. Brisbane: The University of Queensland. url: https://github.com/MartinSchweinberger/TreesUBonn/treesubonn.html (Version 2023.01.19).
+Schweinberger, Martin. 2023. *An introduction to conditional inference trees in R*. Brisbane: The University of Queensland. url: https://github.com/MartinSchweinberger/TreesUBonn/treesubonn.html (Version 2023.01.19).
 
 ```
 @manual{schweinberger2023tree,
@@ -65,9 +65,6 @@ Schweinberger, Martin. 2023. *An introduction to conditional inference trees in
 }
 ```
 
-```{r fin}
-sessionInfo()
-```
 
 
 

@@ -1,4 +1,4 @@
-# Conditional Inference Trees
+# Conditional Inference Trees {-}
 
 Conditional Inference Trees (CITs) are much better at determining the *true* effect of a predictor, i.e. the effect of a predictor if all other effects are simultaneously considered. In contrast to CARTs, CITs use p-values to determine splits in the data. Below is a conditional inference tree which shows how and what factors contribute to the use of discourse *like*. In conditional inference trees predictors are only included if the predictor is significant (i.e. if these predictors are necessary). 
 
@@ -90,9 +90,7 @@ ggparty(citd.ctree) +
     shared_axis_labels = TRUE)
 ```
 
-## Problems of Conditional Inference Trees{-}
-
-Like other tree-based methods, CITs are very intuitive, multivariate, non-parametric, they do not require large data sets, and they are easy to implement. Despite these obvious advantages, they have at least one major short coming compared to other, more sophisticated tree-structure models (in addition to the general issues that tree-structure models exhibit as discussed above: they are prone to **overfitting** which means that they fit the observed data very well but preform much worse when being applied to new data.
+## Extensions of Conditional Inference Trees{-}
 
 An extension which remedies this problem is to use a so-called ensemble method which grows many varied trees. The most common ensemble method is called a *Random Forest Analysis* and, unfortunately, we cannot deal with random forests here (but if you are interested, check out [this tutorial](https://ladal.edu.au/tree.html)). 
 

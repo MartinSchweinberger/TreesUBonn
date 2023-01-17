@@ -3,8 +3,3 @@ tab:tb1
 tab:tb2
 tab:citn3b
 tab:tb3
-introduction
-about-me
-about-the-workshop
-conditional-inference-trees
-practice
