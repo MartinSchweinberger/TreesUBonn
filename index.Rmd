@@ -3,7 +3,30 @@ title: "An introduction to conditional inference trees in R"
 author: "Martin Schweinberger"
 date: "Jan. 19, 2023"
 site: bookdown::bookdown_site
+documentclass: book
+bibliography: ["book.bib", "packages.bib"]
+biblio-style: apalike
+link-citations: yes
 ---
 
 # Introduction
 
+This tutorial focuses on conditional inference trees and their implementation in R. 
+
+<div class="warning" style='padding:0.1em; background-color:#f2f2f2; color:#51247a'>
+<span>
+<p style='margin-top:1em; text-align:center'>
+[![Colab](https://slcladal.github.io/images/colab_lg.png)](https://colab.research.google.com/drive/1yi0hwcwfl5k01XfmpkEgpOf1jL1ObKcC?usp=sharing)<br>
+[**Click this link to open an interactive version of this tutorial on Google Colab**](https://colab.research.google.com/drive/1yi0hwcwfl5k01XfmpkEgpOf1jL1ObKcC?usp=sharing). <br> This interactive Jupyter notebook allows you to execute code yourself and you can also change and edit the notebook, e.g. you can change code and upload your own data. <br>
+</p>
+<p style='margin-left:1em;'>
+</p></span>
+</div>
+
+<br>
+
+Tree-structure models  fall into the machine-learning rather than the inference statistics category as they are commonly used for classification and prediction tasks rather than explanation of relationships between variables. The tree structure represents recursive partitioning of the data to minimize residual deviance that is based on iteratively splitting the data into two subsets. 
+
+The most basic type of tree-structure model is a decision tree which is a type of classification and regression tree (CART). A more elaborate version of a CART is called a Conditional Inference Tree (CIT). The difference between a CART and a CIT is that CITs use significance tests, e.g. the p-values, to select and split variables rather than some information measures like the Gini coefficient [@gries2021statistics].
+
+Like random forests, inference trees are non-parametric and thus do not rely on distributional requirements (or at least on fewer).

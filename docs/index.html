@@ -55,6 +55,28 @@
 
 
 
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -100,8 +122,29 @@
 <p class="date"><em>Jan. 19, 2023</em></p>
 </div>
 <div id="introduction" class="section level1 hasAnchor" number="1">
-<h1><span class="header-section-number">Chapter 1</span> Introduction<a href="index.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<h1><span class="header-section-number">Session 1</span> Introduction<a href="index.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>This tutorial focuses on conditional inference trees and their implementation in R.</p>
+<div class="warning" style="padding:0.1em; background-color:#f2f2f2; color:#51247a">
+<span>
+<p style="margin-top:1em; text-align:center">
+<a href="https://colab.research.google.com/drive/1yi0hwcwfl5k01XfmpkEgpOf1jL1ObKcC?usp=sharing"><img src="https://slcladal.github.io/images/colab_lg.png" alt="Colab" /></a><br>
+<a href="https://colab.research.google.com/drive/1yi0hwcwfl5k01XfmpkEgpOf1jL1ObKcC?usp=sharing"><strong>Click this link to open an interactive version of this tutorial on Google Colab</strong></a>. <br> This interactive Jupyter notebook allows you to execute code yourself and you can also change and edit the notebook, e.g. you can change code and upload your own data. <br>
+</p>
+<p style="margin-left:1em;">
+</p>
+<p></span></p>
+</div>
+<p><br></p>
+<p>Tree-structure models fall into the machine-learning rather than the inference statistics category as they are commonly used for classification and prediction tasks rather than explanation of relationships between variables. The tree structure represents recursive partitioning of the data to minimize residual deviance that is based on iteratively splitting the data into two subsets.</p>
+<p>The most basic type of tree-structure model is a decision tree which is a type of classification and regression tree (CART). A more elaborate version of a CART is called a Conditional Inference Tree (CIT). The difference between a CART and a CIT is that CITs use significance tests, e.g. the p-values, to select and split variables rather than some information measures like the Gini coefficient <span class="citation">(<a href="#ref-gries2021statistics" role="doc-biblioref">Gries 2021</a>)</span>.</p>
+<p>Like random forests, inference trees are non-parametric and thus do not rely on distributional requirements (or at least on fewer).</p>
 
+</div>
+<h3> A caucus-race and a long tale<a href="a-caucus-race-and-a-long-tale.html#a-caucus-race-and-a-long-tale" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-gries2021statistics" class="csl-entry">
+Gries, Stefan Th. 2021. <em>Statistics for Linguistics Using r: A Practical Introduction</em>. Berlin &amp; New York: Mouton de Gruyter.
+</div>
 </div>
             </section>
 
@@ -140,7 +183,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/YOUR GITHUB USERNAME/YOUR REPO NAME/edit/master/index.Rmd",
+"link": "https://github.com/MartinSchweinberger/TreesUBonn/edit/master/index.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -148,7 +191,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/YOUR GITHUB USERNAME/YOUR REPO NAME/blob/master/index.Rmd",
+"link": "https://github.com/MartinSchweinberger/TreesUBonn/blob/master/index.Rmd",
 "text": null
 },
 "download": null,
