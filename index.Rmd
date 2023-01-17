@@ -15,6 +15,8 @@ knitr::include_graphics("https://slcladal.github.io/images/LadalGrey.png")
 
 # Introduction {-}
 
+This website contains contains the materials for workshop *An introduction to conditional inference trees in R* offered Jan. 19, 2023, by Martin Schweinberger at the Rheinische Friedrich-Wilhelms-Universität Bonn.
+
 This workshop focuses on conditional inference trees and their implementation in R. The workshop uses materials provided by the [*Language Technology and Data Analysis Laboratory* (LADAL)](www.ladal.edu.au). If you want a more detailed tutorial on tree-based methods going beyond what the workshop covers see [this LADAL tutorial](https://ladal.edu.au/tree.html) or you would like to know more about doing statistics and text analysis with R, please free to visit and explore the [LADAL website](www.ladal.edu.au).
 
 ```{r martin, echo=FALSE, out.width= "30%", out.extra='style="float:right; padding:10px"'}
@@ -55,7 +57,7 @@ During practice, we will use a Jupyter notebook and you can
 
 ## Citation & Session Info {-}
 
-Schweinberger, Martin. 2023. *An introduction to conditional inference trees in R*. Brisbane: The University of Queensland. url: https://MartinSchweinberger.github.io/TreesUBonn/index.html (Version 2023.01.19).
+Schweinberger, Martin. 2023. *An introduction to conditional inference trees in R*. Bonn: Rheinische Friedrich-Wilhelms-Universität Bonn. url: https://MartinSchweinberger.github.io/TreesUBonn/index.html (Version 2023.01.19).
 
 ```
 @manual{schweinberger2023tree,
@@ -63,8 +65,8 @@ Schweinberger, Martin. 2023. *An introduction to conditional inference trees in 
   title = {An introduction to conditional inference trees in R},
   note = {https://MartinSchweinberger.github.io/TreesUBonn/index.html},
   year = {2023},
-  organization = "The University of Queensland, Australia. School of Languages and Cultures},
-  address = {Brisbane},
+  organization = "Rheinische Friedrich-Wilhelms-Universität Bonn},
+  address = {Bonn},
   edition = {2023.01.19}
 }
 ```
