@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Session 2 What are tree-based models and how do they work? | An introduction to conditional inference trees in R</title>
+  <meta name="description" content="Session 2 What are tree-based models and how do they work? | An introduction to conditional inference trees in R" />
+  <meta name="generator" content="bookdown 0.31 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Session 2 What are tree-based models and how do they work? | An introduction to conditional inference trees in R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Session 2 What are tree-based models and how do they work? | An introduction to conditional inference trees in R" />
+  
+  
+  
+
+<meta name="author" content="Martin Schweinberger" />
+
+
+<meta name="date" content="2023-01-19" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="practice.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/tabwid-1.1.2/tabwid.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Conditional Inference Trees in R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i><b>1.1</b> About me</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#about-the-workshop"><i class="fa fa-check"></i><b>1.2</b> About the workshop</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#advantages"><i class="fa fa-check"></i><b>1.3</b> Advantages</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#problems"><i class="fa fa-check"></i>Problems</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html"><i class="fa fa-check"></i><b>2</b> What are tree-based models and how do they work?</a>
+<ul>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#classification-and-regression-trees"><i class="fa fa-check"></i>Classification And Regression Trees</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#tree-based-models-in-r"><i class="fa fa-check"></i>Tree-Based Models in R</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#how-tree-based-methods-work"><i class="fa fa-check"></i>How Tree-Based Methods Work</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#splitting-numeric-ordinal-and-true-categorical-variables"><i class="fa fa-check"></i>Splitting numeric, ordinal, and true categorical variables</a></li>
+<li class="chapter" data-level="2.1" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#conditional-inference-trees"><i class="fa fa-check"></i><b>2.1</b> Conditional Inference Trees</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#prettifying-your-cit-tree"><i class="fa fa-check"></i>Prettifying your CIT tree</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#problems-of-conditional-inference-trees"><i class="fa fa-check"></i>Problems of Conditional Inference Trees</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#citation-session-info"><i class="fa fa-check"></i>Citation &amp; Session Info</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#references"><i class="fa fa-check"></i>References</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="practice.html"><a href="practice.html"><i class="fa fa-check"></i><b>3</b> Practice</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">An introduction to conditional inference trees in R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="what-are-tree-based-models-and-how-do-they-work" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">Session 2</span> What are tree-based models and how do they work?<a href="what-are-tree-based-models-and-how-do-they-work.html#what-are-tree-based-models-and-how-do-they-work" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="classification-and-regression-trees" class="section level2 unnumbered hasAnchor">
+<h2>Classification And Regression Trees<a href="what-are-tree-based-models-and-how-do-they-work.html#classification-and-regression-trees" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Below is an example of a decision tree which shows what what response to expect - in this case whether a speaker uses discourse <em>like</em> or not. Decision trees, like all CARTs and CITs, answer a simple question, namely <em>How do we best classify elements based on the given predictors?</em>. The answer that decision trees provide is the classification of the elements based on the levels of the predictors. In simple decision trees, all predictors, even those that are not significant are included in the decision tree. The decision tree shows that the best (or most important) predictor for the use of discourse <em>like</em> is age as it is the highest node. Among young speakers, those with high status use <em>like</em> more compared with speakers of lower social status. Among old speakers, women use discourse <em>like</em> more than men.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;tree&quot;</span>)</span>
+<span id="cb1-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;dplyr&quot;</span>)</span>
+<span id="cb1-3"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;grid&quot;</span>)</span>
+<span id="cb1-4"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;flextable&quot;</span>)</span>
+<span id="cb1-5"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;partykit&quot;</span>)</span>
+<span id="cb1-6"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;ggparty&quot;</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/cit1a-1.png" width="672" /></p>
+<p>The <em>yes</em> and <em>no</em> at the bottom show if the speaker should be classified as a user of discourse <em>like</em> (<em>yes</em> or <em>no</em>). Each split can be read as <em>true</em> to the left and <em>false</em> to the right. So that, at the first split, if the person is between the ages of 15 and 40, we need to follow the branch to the left while we need to follow to the right if the person is not 15 to 40.</p>
+<p>Before going through how this conditional decision tree is generated, let us first go over some basic concepts. The top of the decision tree is called <em>root</em> or <em>root node</em>, the categories at the end of branches are called <em>leaves</em> or <em>leaf nodes</em>. Nodes that are in-between the root and leaves are called <em>internal nodes</em> or just <em>nodes</em>. The root node has only arrows or lines pointing away from it, internal nodes have lines going to and from them, while leaf nodes only have lines pointing towards them.</p>
+<p>How to prune and evaluate the accuracy of decision trees is not shown here. If you are interested in this, please check out chapter 7 of <span class="citation">Gries (<a href="#ref-gries2021statistics" role="doc-biblioref">2021</a>)</span> which is a highly recommendable resource that provide a lot of additional information about decision trees and CARTs.</p>
+</div>
+<div id="tree-based-models-in-r" class="section level2 unnumbered hasAnchor">
+<h2>Tree-Based Models in R<a href="what-are-tree-based-models-and-how-do-they-work.html#tree-based-models-in-r" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We will now focus on how to implement tree-based models in R and continue with getting a more detaled understanding og how tree-based methods work.</p>
+</div>
+<div id="how-tree-based-methods-work" class="section level2 unnumbered hasAnchor">
+<h2>How Tree-Based Methods Work<a href="what-are-tree-based-models-and-how-do-they-work.html#how-tree-based-methods-work" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Let us now go over the process by which the decision tree above is generated. In our example, we want to predict whether a person makes use of discourse <em>like</em> given their age, gender, and social status.</p>
+<p>Let us now go over the process by which the decision tree above is generated. In our example, we want to predict whether a person makes use of discourse <em>like</em> given their age, gender, and social status.</p>
+<p>In a first step, we load and inspect the data that we will use in this tutorial. As tree-based models require either numeric or factorized data, we factorize the “character” variables in our data.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load data</span></span>
+<span id="cb2-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb2-2" aria-hidden="true" tabindex="-1"></a>citdata <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(<span class="st">&quot;https://slcladal.github.io/data/treedata.txt&quot;</span>, <span class="at">header =</span> T, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb2-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate_if</span>(is.character, factor)</span></code></pre></div>
+<template id="40c929cb-fca9-459a-af0b-df94c772ee77"><style>
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  border-color: transparent;
+  caption-side: top;
+}
+.tabwid-caption-bottom table{
+  caption-side: bottom;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td, .tabwid th {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+.katex-display {
+    margin: 0 0 !important;
+}
+</style><div class="tabwid"><style>.cl-f144b428{table-layout:auto;width:75%;}.cl-f1393e54{font-family:'Arial';font-size:12pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-f1393e5e{font-family:'Arial';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-f13d92c4{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-f13dae3a{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f13dae44{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f13dae45{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f13dae4e{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f13dae4f{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f13dae58{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f13dae59{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f13dae5a{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f13dae62{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f13dae63{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f13dae6c{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f13dae6d{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class='cl-f144b428'>
+
+<caption>
+<span id="tab:cit4d">Table 2.1: </span><span>First 10 rows of the citdata data</span>
+</caption>
+
+<thead><tr style="overflow-wrap:break-word;"><th class="cl-f13dae3a"><p class="cl-f13d92c4"><span class="cl-f1393e54">Age</span></p></th><th class="cl-f13dae44"><p class="cl-f13d92c4"><span class="cl-f1393e54">Gender</span></p></th><th class="cl-f13dae44"><p class="cl-f13d92c4"><span class="cl-f1393e54">Status</span></p></th><th class="cl-f13dae45"><p class="cl-f13d92c4"><span class="cl-f1393e54">LikeUser</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-f13dae4e"><p class="cl-f13d92c4"><span class="cl-f1393e5e">15-40</span></p></td><td class="cl-f13dae4f"><p class="cl-f13d92c4"><span class="cl-f1393e5e">female</span></p></td><td class="cl-f13dae4f"><p class="cl-f13d92c4"><span class="cl-f1393e5e">high</span></p></td><td class="cl-f13dae58"><p class="cl-f13d92c4"><span class="cl-f1393e5e">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f13dae59"><p class="cl-f13d92c4"><span class="cl-f1393e5e">15-40</span></p></td><td class="cl-f13dae5a"><p class="cl-f13d92c4"><span class="cl-f1393e5e">female</span></p></td><td class="cl-f13dae5a"><p class="cl-f13d92c4"><span class="cl-f1393e5e">high</span></p></td><td class="cl-f13dae62"><p class="cl-f13d92c4"><span class="cl-f1393e5e">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f13dae4e"><p class="cl-f13d92c4"><span class="cl-f1393e5e">15-40</span></p></td><td class="cl-f13dae4f"><p class="cl-f13d92c4"><span class="cl-f1393e5e">male</span></p></td><td class="cl-f13dae4f"><p class="cl-f13d92c4"><span class="cl-f1393e5e">high</span></p></td><td class="cl-f13dae58"><p class="cl-f13d92c4"><span class="cl-f1393e5e">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f13dae59"><p class="cl-f13d92c4"><span class="cl-f1393e5e">41-80</span></p></td><td class="cl-f13dae5a"><p class="cl-f13d92c4"><span class="cl-f1393e5e">female</span></p></td><td class="cl-f13dae5a"><p class="cl-f13d92c4"><span class="cl-f1393e5e">low</span></p></td><td class="cl-f13dae62"><p class="cl-f13d92c4"><span class="cl-f1393e5e">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f13dae4e"><p class="cl-f13d92c4"><span class="cl-f1393e5e">41-80</span></p></td><td class="cl-f13dae4f"><p class="cl-f13d92c4"><span class="cl-f1393e5e">male</span></p></td><td class="cl-f13dae4f"><p class="cl-f13d92c4"><span class="cl-f1393e5e">high</span></p></td><td class="cl-f13dae58"><p class="cl-f13d92c4"><span class="cl-f1393e5e">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f13dae59"><p class="cl-f13d92c4"><span class="cl-f1393e5e">41-80</span></p></td><td class="cl-f13dae5a"><p class="cl-f13d92c4"><span class="cl-f1393e5e">male</span></p></td><td class="cl-f13dae5a"><p class="cl-f13d92c4"><span class="cl-f1393e5e">low</span></p></td><td class="cl-f13dae62"><p class="cl-f13d92c4"><span class="cl-f1393e5e">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f13dae4e"><p class="cl-f13d92c4"><span class="cl-f1393e5e">41-80</span></p></td><td class="cl-f13dae4f"><p class="cl-f13d92c4"><span class="cl-f1393e5e">female</span></p></td><td class="cl-f13dae4f"><p class="cl-f13d92c4"><span class="cl-f1393e5e">low</span></p></td><td class="cl-f13dae58"><p class="cl-f13d92c4"><span class="cl-f1393e5e">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f13dae59"><p class="cl-f13d92c4"><span class="cl-f1393e5e">15-40</span></p></td><td class="cl-f13dae5a"><p class="cl-f13d92c4"><span class="cl-f1393e5e">male</span></p></td><td class="cl-f13dae5a"><p class="cl-f13d92c4"><span class="cl-f1393e5e">high</span></p></td><td class="cl-f13dae62"><p class="cl-f13d92c4"><span class="cl-f1393e5e">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f13dae4e"><p class="cl-f13d92c4"><span class="cl-f1393e5e">41-80</span></p></td><td class="cl-f13dae4f"><p class="cl-f13d92c4"><span class="cl-f1393e5e">male</span></p></td><td class="cl-f13dae4f"><p class="cl-f13d92c4"><span class="cl-f1393e5e">low</span></p></td><td class="cl-f13dae58"><p class="cl-f13d92c4"><span class="cl-f1393e5e">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f13dae63"><p class="cl-f13d92c4"><span class="cl-f1393e5e">41-80</span></p></td><td class="cl-f13dae6c"><p class="cl-f13d92c4"><span class="cl-f1393e5e">male</span></p></td><td class="cl-f13dae6c"><p class="cl-f13d92c4"><span class="cl-f1393e5e">low</span></p></td><td class="cl-f13dae6d"><p class="cl-f13d92c4"><span class="cl-f1393e5e">no</span></p></td></tr></tbody></table></div></template>
+<div class="flextable-shadow-host" id="d94f2b5d-5b71-4ac8-818a-4d50694e42ae"></div>
+<script>
+var dest = document.getElementById("d94f2b5d-5b71-4ac8-818a-4d50694e42ae");
+var template = document.getElementById("40c929cb-fca9-459a-af0b-df94c772ee77");
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+</script>
+
+<p>The data now consists of factors which two levels each.</p>
+<p>The first step in generating a decision tree consists in determining, what the root of the decision tree should be. This means that we have to determine which of the variables represents the root node. In order to do so, we tabulate for each variable level, how many speakers of that level have used discourse <em>like</em> (LikeUsers) and how many have not used discourse <em>like</em> (NonLikeUsers).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tabulate data</span></span>
+<span id="cb3-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(citdata<span class="sc">$</span>LikeUser, citdata<span class="sc">$</span>Gender)</span></code></pre></div>
+<pre><code>##      
+##       female male
+##   no      43   75
+##   yes     91   42</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(citdata<span class="sc">$</span>LikeUser, citdata<span class="sc">$</span>Age)</span></code></pre></div>
+<pre><code>##      
+##       15-40 41-80
+##   no     34    84
+##   yes    92    41</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(citdata<span class="sc">$</span>LikeUser, citdata<span class="sc">$</span>Status)</span></code></pre></div>
+<pre><code>##      
+##       high low
+##   no    33  85
+##   yes   73  60</code></pre>
+<p>None of the predictors is perfect (the predictors are therefore referred to as <em>impure</em>). To determine which variable is the root, we will calculate the degree of “impurity” for each variable - the variable which has the lowest impurity value will be the root.</p>
+<p>The most common measure of impurity in the context of conditional inference trees is called <em>Gini</em> (an alternative that is common when generating regression trees is the deviance). The Gini value or gini index was introduced by Corrado Gini as a measure for income inequality. In our case we seek to maximize inequality of distributions of leave nodes which is why the gini index is useful for tree based models. For each level we apply the following equation to determine the gini impurity value:</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{x} = 1 - ( p_{1} )^{2} - ( p_{0} )^{2}
+
+\end{equation}\]</span></p>
+<p>For the node for men, this would mean the following:</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{men} = 1-(\frac{42} {42+75})^{2} - (\frac{75} {42+75})^{2} = 0.4602235
+
+\end{equation}\]</span></p>
+<p>For women, we calculate G or Gini as follows:</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{women} = 1-(\frac{91} {91+43})^{2} - (\frac{43} {91+43})^{2} = 0.4358432
+
+\end{equation}\]</span></p>
+<p>To calculate the Gini value of Gender, we need to calculate the weighted average leaf node impurity (weighted because the number of speakers is different in each group). We calculate the weighted average leaf node impurity using the equation below.</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{Gender} = \frac{N_{men}} {N_{Total}} \times G_{men} +  \frac{N_{women}} {N_{Total}} \times G_{women}
+
+G_{Gender} = \frac{159} {303} \times 0.4602235 +  \frac{144} {303} \times 0.4358432 = 0.4611915
+
+\end{equation}\]</span></p>
+<p>We will now perform the gini-calculation for gender (see below).</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for men</span></span>
+<span id="cb9-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb9-2" aria-hidden="true" tabindex="-1"></a>gini_men <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(<span class="dv">42</span><span class="sc">/</span>(<span class="dv">42</span><span class="sc">+</span><span class="dv">75</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">75</span><span class="sc">/</span>(<span class="dv">42</span><span class="sc">+</span><span class="dv">75</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb9-3"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for women</span></span>
+<span id="cb9-4"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb9-4" aria-hidden="true" tabindex="-1"></a>gini_women <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(<span class="dv">91</span><span class="sc">/</span>(<span class="dv">91</span><span class="sc">+</span><span class="dv">43</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">43</span><span class="sc">/</span>(<span class="dv">91</span><span class="sc">+</span><span class="dv">43</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb9-5"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate weighted average of Gini for Gender</span></span>
+<span id="cb9-6"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb9-6" aria-hidden="true" tabindex="-1"></a>gini_gender <span class="ot">&lt;-</span> <span class="dv">42</span><span class="sc">/</span>(<span class="dv">42</span><span class="sc">+</span><span class="dv">75</span>)<span class="sc">*</span> gini_men <span class="sc">+</span>  <span class="dv">91</span><span class="sc">/</span>(<span class="dv">91</span><span class="sc">+</span><span class="dv">43</span>) <span class="sc">*</span> gini_women</span>
+<span id="cb9-7"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb9-7" aria-hidden="true" tabindex="-1"></a>gini_gender</span></code></pre></div>
+<pre><code>## [1] 0.4611915</code></pre>
+<p>The gini for gender is 0.4612. In a next step, we revisit the age distribution and we continue to calculate the gini value for age.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for age groups</span></span>
+<span id="cb11-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb11-2" aria-hidden="true" tabindex="-1"></a>gini_young <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(<span class="dv">92</span><span class="sc">/</span>(<span class="dv">92</span><span class="sc">+</span><span class="dv">34</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">34</span><span class="sc">/</span>(<span class="dv">92</span><span class="sc">+</span><span class="dv">34</span>))<span class="sc">^</span><span class="dv">2</span>  <span class="co"># Gini: young</span></span>
+<span id="cb11-3"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb11-3" aria-hidden="true" tabindex="-1"></a>gini_old <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(<span class="dv">41</span><span class="sc">/</span>(<span class="dv">41</span><span class="sc">+</span><span class="dv">84</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">84</span><span class="sc">/</span>(<span class="dv">41</span><span class="sc">+</span><span class="dv">84</span>))<span class="sc">^</span><span class="dv">2</span>    <span class="co"># Gini: old</span></span>
+<span id="cb11-4"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate weighted average of Gini for Age</span></span>
+<span id="cb11-5"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb11-5" aria-hidden="true" tabindex="-1"></a>gini_age <span class="ot">&lt;-</span> <span class="dv">92</span><span class="sc">/</span>(<span class="dv">92</span><span class="sc">+</span><span class="dv">34</span>)<span class="sc">*</span> gini_young <span class="sc">+</span>  <span class="dv">41</span><span class="sc">/</span>(<span class="dv">41</span><span class="sc">+</span><span class="dv">84</span>) <span class="sc">*</span> gini_old</span>
+<span id="cb11-6"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb11-6" aria-hidden="true" tabindex="-1"></a>gini_age</span></code></pre></div>
+<pre><code>## [1] 0.4323148</code></pre>
+<p>The gini for age is .4323 and we continue by revisiting the status distribution and we continue to calculate the gini value for status.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb13-1" aria-hidden="true" tabindex="-1"></a>gini_high <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(<span class="dv">73</span><span class="sc">/</span>(<span class="dv">33</span><span class="sc">+</span><span class="dv">73</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">33</span><span class="sc">/</span>(<span class="dv">33</span><span class="sc">+</span><span class="dv">73</span>))<span class="sc">^</span><span class="dv">2</span>   <span class="co"># Gini: high</span></span>
+<span id="cb13-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb13-2" aria-hidden="true" tabindex="-1"></a>gini_low <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(<span class="dv">60</span><span class="sc">/</span>(<span class="dv">60</span><span class="sc">+</span><span class="dv">85</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">85</span><span class="sc">/</span>(<span class="dv">60</span><span class="sc">+</span><span class="dv">85</span>))<span class="sc">^</span><span class="dv">2</span>    <span class="co"># Gini: low</span></span>
+<span id="cb13-3"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate weighted average of Gini for Status</span></span>
+<span id="cb13-4"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb13-4" aria-hidden="true" tabindex="-1"></a>gini_status <span class="ot">&lt;-</span> <span class="dv">73</span><span class="sc">/</span>(<span class="dv">33</span><span class="sc">+</span><span class="dv">73</span>)<span class="sc">*</span> gini_high <span class="sc">+</span>  <span class="dv">60</span><span class="sc">/</span>(<span class="dv">60</span><span class="sc">+</span><span class="dv">85</span>) <span class="sc">*</span> gini_low</span>
+<span id="cb13-5"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb13-5" aria-hidden="true" tabindex="-1"></a>gini_status</span></code></pre></div>
+<pre><code>## [1] 0.4960521</code></pre>
+<p>The gini for status is .4961 and we can now compare the gini values for age, gender, and status.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare age, gender, and status ginis</span></span>
+<span id="cb15-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb15-2" aria-hidden="true" tabindex="-1"></a>gini_age; gini_gender; gini_status</span></code></pre></div>
+<pre><code>## [1] 0.4323148</code></pre>
+<pre><code>## [1] 0.4611915</code></pre>
+<pre><code>## [1] 0.4960521</code></pre>
+<p>Since age has the lowest gini (impurity) value, our first split is by age and age, thus, represents our root node. Our manually calculated conditional inference tree right now looks as below.</p>
+<p><img src="bookdownproj_files/figure-html/cit13-1.png" width="672" /></p>
+<p>In a next step, we need to find out which of the remaining variables best separates the speakers who use discourse <em>like</em> from those that do not under the first node. In order to do so, we calculate the Gini values for <em>Gender</em> and <em>SocialStatus</em> for the <em>15-40</em> node.</p>
+<p>We thus move on and test if and how to split this branch.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 5TH NODE</span></span>
+<span id="cb19-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># split data according to first split (only young data)</span></span>
+<span id="cb19-3"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb19-3" aria-hidden="true" tabindex="-1"></a>young <span class="ot">&lt;-</span> citdata <span class="sc">%&gt;%</span></span>
+<span id="cb19-4"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb19-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(Age <span class="sc">==</span> <span class="st">&quot;15-40&quot;</span>)</span>
+<span id="cb19-5"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># inspect distribution</span></span>
+<span id="cb19-6"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb19-6" aria-hidden="true" tabindex="-1"></a>tbyounggender <span class="ot">&lt;-</span> <span class="fu">table</span>(young<span class="sc">$</span>LikeUser, young<span class="sc">$</span>Gender)</span>
+<span id="cb19-7"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb19-7" aria-hidden="true" tabindex="-1"></a>tbyounggender</span></code></pre></div>
+<pre><code>##      
+##       female male
+##   no      17   17
+##   yes     58   34</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for Gender</span></span>
+<span id="cb21-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for men</span></span>
+<span id="cb21-3"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb21-3" aria-hidden="true" tabindex="-1"></a>gini_youngmen <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(tbyounggender[<span class="dv">2</span>,<span class="dv">2</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyounggender[,<span class="dv">2</span>]))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (tbyounggender[<span class="dv">1</span>,<span class="dv">2</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyounggender[,<span class="dv">2</span>]))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb21-4"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for women</span></span>
+<span id="cb21-5"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb21-5" aria-hidden="true" tabindex="-1"></a>gini_youngwomen <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(tbyounggender[<span class="dv">2</span>,<span class="dv">1</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyounggender[,<span class="dv">1</span>]))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (tbyounggender[<span class="dv">1</span>,<span class="dv">1</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyounggender[,<span class="dv">1</span>]))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb21-6"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># # calculate weighted average of Gini for Gender</span></span>
+<span id="cb21-7"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb21-7" aria-hidden="true" tabindex="-1"></a>gini_younggender <span class="ot">&lt;-</span> <span class="fu">sum</span>(tbyounggender[,<span class="dv">2</span>])<span class="sc">/</span><span class="fu">sum</span>(tbyounggender)<span class="sc">*</span> gini_youngmen <span class="sc">+</span>  <span class="fu">sum</span>(tbyounggender[,<span class="dv">1</span>])<span class="sc">/</span><span class="fu">sum</span>(tbyounggender) <span class="sc">*</span> gini_youngwomen</span>
+<span id="cb21-8"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb21-8" aria-hidden="true" tabindex="-1"></a>gini_younggender</span></code></pre></div>
+<pre><code>## [1] 0.3885714</code></pre>
+<p>The gini value for gender among young speakers is 0.3886.</p>
+<p>We continue by inspecting the status distribution.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for Status</span></span>
+<span id="cb23-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># inspect distribution</span></span>
+<span id="cb23-3"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb23-3" aria-hidden="true" tabindex="-1"></a>tbyoungstatus <span class="ot">&lt;-</span> <span class="fu">table</span>(young<span class="sc">$</span>LikeUser, young<span class="sc">$</span>Status)</span>
+<span id="cb23-4"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb23-4" aria-hidden="true" tabindex="-1"></a>tbyoungstatus</span></code></pre></div>
+<pre><code>##      
+##       high low
+##   no    11  23
+##   yes   57  35</code></pre>
+<p>We now calculate the gini value for status.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for status</span></span>
+<span id="cb25-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for low</span></span>
+<span id="cb25-3"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb25-3" aria-hidden="true" tabindex="-1"></a>gini_younglow <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(tbyoungstatus[<span class="dv">2</span>,<span class="dv">2</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyoungstatus[,<span class="dv">2</span>]))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (tbyoungstatus[<span class="dv">1</span>,<span class="dv">2</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyoungstatus[,<span class="dv">2</span>]))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb25-4"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate Gini for high</span></span>
+<span id="cb25-5"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb25-5" aria-hidden="true" tabindex="-1"></a>gini_younghigh <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">-</span>(tbyoungstatus[<span class="dv">2</span>,<span class="dv">1</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyoungstatus[,<span class="dv">1</span>]))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (tbyoungstatus[<span class="dv">1</span>,<span class="dv">1</span>]<span class="sc">/</span><span class="fu">sum</span>(tbyoungstatus[,<span class="dv">1</span>]))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb25-6"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># # calculate weighted average of Gini for status</span></span>
+<span id="cb25-7"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb25-7" aria-hidden="true" tabindex="-1"></a>gini_youngstatus <span class="ot">&lt;-</span> <span class="fu">sum</span>(tbyoungstatus[,<span class="dv">2</span>])<span class="sc">/</span><span class="fu">sum</span>(tbyoungstatus)<span class="sc">*</span> gini_younglow <span class="sc">+</span>  <span class="fu">sum</span>(tbyoungstatus[,<span class="dv">1</span>])<span class="sc">/</span><span class="fu">sum</span>(tbyoungstatus) <span class="sc">*</span> gini_younghigh</span>
+<span id="cb25-8"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb25-8" aria-hidden="true" tabindex="-1"></a>gini_youngstatus</span></code></pre></div>
+<pre><code>## [1] 0.3666651</code></pre>
+<p>Since the gini value for status (0.3667) is lower than the gini value for gender (0.3886), we split by status.</p>
+<p>We would continue to calculate the gini values and always split at the lowest gini levels until we reach a leaf node. Then, we would continue doing the same for the remaining branches until the entire data is binned into different leaf nodes.</p>
+<p>In addition to plotting the decision tree, we can also check its accuracy. To do so, we predict the use of <em>like</em> based on the decision tree and compare them to the observed uses of <em>like</em>. Then we use the <code>confusionMatrix</code> function from the <code>caret</code> package to get an overview of the accuracy statistics.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb27-1" aria-hidden="true" tabindex="-1"></a>dtreeprediction <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">ifelse</span>(<span class="fu">predict</span>(dtree)[,<span class="dv">2</span>] <span class="sc">&gt;</span> .<span class="dv">5</span>, <span class="st">&quot;yes&quot;</span>, <span class="st">&quot;no&quot;</span>))</span>
+<span id="cb27-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(dtreeprediction, citdata<span class="sc">$</span>LikeUser)</span></code></pre></div>
+<p>The conditional inference tree has an accuracy of 72.9 percent which is significantly better than the base-line accuracy of 53.0 percent (No Information Rate <span class="math inline">\(*\)</span> 100). To understand what the other statistics refer to and how they are calculated, run the command <code>?confusionMatrix</code>.</p>
+</div>
+<div id="splitting-numeric-ordinal-and-true-categorical-variables" class="section level2 unnumbered hasAnchor">
+<h2>Splitting numeric, ordinal, and true categorical variables<a href="what-are-tree-based-models-and-how-do-they-work.html#splitting-numeric-ordinal-and-true-categorical-variables" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>While it is rather straight forward to calculate the Gini values for categorical variables, it may not seem quite as apparent how to calculate splits for numeric or ordinal variables. To illustrate how the algorithm works on such variables, consider the example data set shown below.</p>
+<template id="8a6e5ff7-95b3-4647-8185-0b73f818737c"><style>
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  border-color: transparent;
+  caption-side: top;
+}
+.tabwid-caption-bottom table{
+  caption-side: bottom;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td, .tabwid th {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+.katex-display {
+    margin: 0 0 !important;
+}
+</style><div class="tabwid"><style>.cl-f219f0de{table-layout:auto;width:75%;}.cl-f20e332a{font-family:'Arial';font-size:12pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-f20e3334{font-family:'Arial';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-f212ecee{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-f212ed02{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-f2130b70{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2130b71{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2130b7a{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2130b7b{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2130b7c{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2130b84{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2130b8e{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2130b8f{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class='cl-f219f0de'>
+
+<caption>
+<span id="tab:tb1">Table 2.2: </span><span>First 10 rows of the citdata2 data.</span>
+</caption>
+
+<thead><tr style="overflow-wrap:break-word;"><th class="cl-f2130b70"><p class="cl-f212ecee"><span class="cl-f20e332a">Age</span></p></th><th class="cl-f2130b71"><p class="cl-f212ed02"><span class="cl-f20e332a">LikeUser</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-f2130b7a"><p class="cl-f212ecee"><span class="cl-f20e3334">15</span></p></td><td class="cl-f2130b7b"><p class="cl-f212ed02"><span class="cl-f20e3334">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f2130b7c"><p class="cl-f212ecee"><span class="cl-f20e3334">37</span></p></td><td class="cl-f2130b84"><p class="cl-f212ed02"><span class="cl-f20e3334">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f2130b7a"><p class="cl-f212ecee"><span class="cl-f20e3334">63</span></p></td><td class="cl-f2130b7b"><p class="cl-f212ed02"><span class="cl-f20e3334">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f2130b7c"><p class="cl-f212ecee"><span class="cl-f20e3334">42</span></p></td><td class="cl-f2130b84"><p class="cl-f212ed02"><span class="cl-f20e3334">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f2130b7a"><p class="cl-f212ecee"><span class="cl-f20e3334">22</span></p></td><td class="cl-f2130b7b"><p class="cl-f212ed02"><span class="cl-f20e3334">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f2130b8e"><p class="cl-f212ecee"><span class="cl-f20e3334">27</span></p></td><td class="cl-f2130b8f"><p class="cl-f212ed02"><span class="cl-f20e3334">yes</span></p></td></tr></tbody></table></div></template>
+<div class="flextable-shadow-host" id="adb072dd-982a-4c53-b616-4c2c0e4a0db0"></div>
+<script>
+var dest = document.getElementById("adb072dd-982a-4c53-b616-4c2c0e4a0db0");
+var template = document.getElementById("8a6e5ff7-95b3-4647-8185-0b73f818737c");
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+</script>
+
+<p>In a first step, we order the numeric variable so that we arrive at the following table.</p>
+<template id="cb56a0b1-9a1e-4843-a78a-e6b3c70b3a53"><style>
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  border-color: transparent;
+  caption-side: top;
+}
+.tabwid-caption-bottom table{
+  caption-side: bottom;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td, .tabwid th {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+.katex-display {
+    margin: 0 0 !important;
+}
+</style><div class="tabwid"><style>.cl-f23b0eea{table-layout:auto;width:75%;}.cl-f22e76a8{font-family:'Arial';font-size:12pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-f22e76b2{font-family:'Arial';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-f2336b0e{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-f2336b18{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-f2338a58{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2338a62{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2338a6c{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2338a6d{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2338a76{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2338a77{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2338a80{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f2338a81{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class='cl-f23b0eea'>
+
+<caption>
+<span id="tab:tb2">Table 2.3: </span><span>First 10 rows of the citdata2 data arranged by age.</span>
+</caption>
+
+<thead><tr style="overflow-wrap:break-word;"><th class="cl-f2338a58"><p class="cl-f2336b0e"><span class="cl-f22e76a8">Age</span></p></th><th class="cl-f2338a62"><p class="cl-f2336b18"><span class="cl-f22e76a8">LikeUser</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-f2338a6c"><p class="cl-f2336b0e"><span class="cl-f22e76b2">15</span></p></td><td class="cl-f2338a6d"><p class="cl-f2336b18"><span class="cl-f22e76b2">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f2338a76"><p class="cl-f2336b0e"><span class="cl-f22e76b2">22</span></p></td><td class="cl-f2338a77"><p class="cl-f2336b18"><span class="cl-f22e76b2">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f2338a6c"><p class="cl-f2336b0e"><span class="cl-f22e76b2">27</span></p></td><td class="cl-f2338a6d"><p class="cl-f2336b18"><span class="cl-f22e76b2">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f2338a76"><p class="cl-f2336b0e"><span class="cl-f22e76b2">37</span></p></td><td class="cl-f2338a77"><p class="cl-f2336b18"><span class="cl-f22e76b2">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f2338a6c"><p class="cl-f2336b0e"><span class="cl-f22e76b2">42</span></p></td><td class="cl-f2338a6d"><p class="cl-f2336b18"><span class="cl-f22e76b2">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f2338a80"><p class="cl-f2336b0e"><span class="cl-f22e76b2">63</span></p></td><td class="cl-f2338a81"><p class="cl-f2336b18"><span class="cl-f22e76b2">no</span></p></td></tr></tbody></table></div></template>
+<div class="flextable-shadow-host" id="b71ff2c7-9832-4cbf-9fb1-5a39ebe0e270"></div>
+<script>
+var dest = document.getElementById("b71ff2c7-9832-4cbf-9fb1-5a39ebe0e270");
+var template = document.getElementById("cb56a0b1-9a1e-4843-a78a-e6b3c70b3a53");
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+</script>
+
+<p>Next, we calculate the means for each level of “Age”.</p>
+<template id="e0c39da4-e392-4df2-8ec4-4c3da3fafbc8"><style>
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  border-color: transparent;
+  caption-side: top;
+}
+.tabwid-caption-bottom table{
+  caption-side: bottom;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td, .tabwid th {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+.katex-display {
+    margin: 0 0 !important;
+}
+</style><div class="tabwid"><style>.cl-f25c1cd4{table-layout:auto;width:75%;}.cl-f2500dea{font-family:'Arial';font-size:12pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-f2500dfe{font-family:'Arial';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-f254a558{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-f254a56c{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-f254c36c{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f254c376{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f254c380{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f254c38a{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f254c38b{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f254c38c{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f254c394{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f254c395{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class='cl-f25c1cd4'>
+
+<caption>
+<span id="tab:citn3b">Table 2.4: </span><span>First 10 rows of the citdata3 data arranged by age.</span>
+</caption>
+
+<thead><tr style="overflow-wrap:break-word;"><th class="cl-f254c36c"><p class="cl-f254a558"><span class="cl-f2500dea">Age</span></p></th><th class="cl-f254c376"><p class="cl-f254a56c"><span class="cl-f2500dea">LikeUser</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-f254c380"><p class="cl-f254a558"><span class="cl-f2500dfe">15.0</span></p></td><td class="cl-f254c38a"><p class="cl-f254a56c"><span class="cl-f2500dfe">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f254c38b"><p class="cl-f254a558"><span class="cl-f2500dfe">18.5</span></p></td><td class="cl-f254c38c"><p class="cl-f254a56c"><span class="cl-f2500dfe"></span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f254c380"><p class="cl-f254a558"><span class="cl-f2500dfe">22.0</span></p></td><td class="cl-f254c38a"><p class="cl-f254a56c"><span class="cl-f2500dfe">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f254c38b"><p class="cl-f254a558"><span class="cl-f2500dfe">24.5</span></p></td><td class="cl-f254c38c"><p class="cl-f254a56c"><span class="cl-f2500dfe"></span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f254c380"><p class="cl-f254a558"><span class="cl-f2500dfe">27.0</span></p></td><td class="cl-f254c38a"><p class="cl-f254a56c"><span class="cl-f2500dfe">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f254c38b"><p class="cl-f254a558"><span class="cl-f2500dfe">32.0</span></p></td><td class="cl-f254c38c"><p class="cl-f254a56c"><span class="cl-f2500dfe"></span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f254c380"><p class="cl-f254a558"><span class="cl-f2500dfe">37.0</span></p></td><td class="cl-f254c38a"><p class="cl-f254a56c"><span class="cl-f2500dfe">no</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f254c38b"><p class="cl-f254a558"><span class="cl-f2500dfe">39.5</span></p></td><td class="cl-f254c38c"><p class="cl-f254a56c"><span class="cl-f2500dfe"></span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f254c380"><p class="cl-f254a558"><span class="cl-f2500dfe">42.0</span></p></td><td class="cl-f254c38a"><p class="cl-f254a56c"><span class="cl-f2500dfe">yes</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f254c394"><p class="cl-f254a558"><span class="cl-f2500dfe">52.5</span></p></td><td class="cl-f254c395"><p class="cl-f254a56c"><span class="cl-f2500dfe"></span></p></td></tr></tbody></table></div></template>
+<div class="flextable-shadow-host" id="46c99fbe-2672-468f-ad51-d602a7914d7b"></div>
+<script>
+var dest = document.getElementById("46c99fbe-2672-468f-ad51-d602a7914d7b");
+var template = document.getElementById("e0c39da4-e392-4df2-8ec4-4c3da3fafbc8");
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+</script>
+
+<p>Now, we calculate the Gini values for each average level of age. How this is done is shown below for the first split.</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{x} = 1 - ( p_{1} )^{2} - ( p_{0} )^{2}
+
+\end{equation}\]</span></p>
+<p>For an age smaller than 18.5 this would mean:</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{youngerthan18.5} = 1-(\frac{1} {1+0})^{2} - (\frac{0} {1+0})^{2} = 0.0
+
+\end{equation}\]</span></p>
+<p>For an age greater than 18.5, we calculate G or Gini as follows:</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{olerthan18.5} = 1-(\frac{2} {2+3})^{2} - (\frac{3} {2+3})^{2} = 0.48
+
+\end{equation}\]</span></p>
+<p>Now, we calculate the Gini for that split as we have done above.</p>
+<p><span class="math display">\[\begin{equation}
+
+G_{split18.5} = \frac{N_{youngerthan18.5}} {N_{Total}} \times G_{youngerthan18.5} +  \frac{N_{olderthan18.5}} {N_{Total}} \times G_{olderthan18.5}
+
+G_{split18.5} = \frac{1} {6} \times 0.0 +  \frac{5} {6} \times 0.48 = 0.4
+
+\end{equation}\]</span></p>
+<p>We then have to calculate the gini values for all possible age splits which yields the following results:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 18.5</span></span>
+<span id="cb28-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="dv">0</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">0</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="dv">0</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-3"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">2</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">+</span><span class="dv">3</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">3</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">+</span><span class="dv">3</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-4"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.0</span> <span class="sc">+</span>  <span class="dv">5</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.48</span></span>
+<span id="cb28-5"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 24.4</span></span>
+<span id="cb28-6"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">2</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">+</span><span class="dv">0</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">0</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">+</span><span class="dv">0</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-7"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">3</span><span class="sc">/</span>(<span class="dv">3</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">2</span><span class="sc">/</span>(<span class="dv">3</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-8"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.0</span> <span class="sc">+</span>  <span class="dv">4</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.1875</span></span>
+<span id="cb28-9"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 32</span></span>
+<span id="cb28-10"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">3</span><span class="sc">/</span>(<span class="dv">3</span><span class="sc">+</span><span class="dv">0</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">0</span><span class="sc">/</span>(<span class="dv">3</span><span class="sc">+</span><span class="dv">0</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-11"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="dv">2</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">2</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="dv">2</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-12"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="dv">3</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.0</span> <span class="sc">+</span>  <span class="dv">3</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.4444444</span></span>
+<span id="cb28-13"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 39.5</span></span>
+<span id="cb28-14"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">3</span><span class="sc">/</span>(<span class="dv">3</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>(<span class="dv">3</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-15"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-16"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="dv">4</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.375</span> <span class="sc">+</span>  <span class="dv">2</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.5</span></span>
+<span id="cb28-17"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 52.5</span></span>
+<span id="cb28-18"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">4</span><span class="sc">/</span>(<span class="dv">4</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>(<span class="dv">4</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-19"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>(<span class="dv">0</span><span class="sc">/</span>(<span class="dv">0</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>(<span class="dv">0</span><span class="sc">+</span><span class="dv">1</span>))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-20"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="dv">5</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.32</span> <span class="sc">+</span>  <span class="dv">1</span><span class="sc">/</span><span class="dv">6</span> <span class="sc">*</span> <span class="fl">0.0</span></span></code></pre></div>
+<template id="daca9982-d130-49ff-bb65-20715b5865f0"><style>
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  border-color: transparent;
+  caption-side: top;
+}
+.tabwid-caption-bottom table{
+  caption-side: bottom;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td, .tabwid th {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+.katex-display {
+    margin: 0 0 !important;
+}
+</style><div class="tabwid"><style>.cl-f282787a{table-layout:auto;width:75%;}.cl-f276aba8{font-family:'Arial';font-size:12pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-f276abc6{font-family:'Arial';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-f27b9f1e{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-f27bbbca{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f27bbbd4{background-color:rgba(207, 207, 207, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f27bbbde{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f27bbbdf{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f27bbbe8{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f27bbbe9{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f27bbbf2{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f27bbbf3{background-color:rgba(239, 239, 239, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class='cl-f282787a'>
+
+<caption>
+<span id="tab:tb3">Table 2.5: </span><span>First 10 rows of the citdata3 data with Gini coefficients.</span>
+</caption>
+
+<thead><tr style="overflow-wrap:break-word;"><th class="cl-f27bbbca"><p class="cl-f27b9f1e"><span class="cl-f276aba8">AgeSplit</span></p></th><th class="cl-f27bbbd4"><p class="cl-f27b9f1e"><span class="cl-f276aba8">Gini</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-f27bbbde"><p class="cl-f27b9f1e"><span class="cl-f276abc6">18.5</span></p></td><td class="cl-f27bbbdf"><p class="cl-f27b9f1e"><span class="cl-f276abc6">0.400</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f27bbbe8"><p class="cl-f27b9f1e"><span class="cl-f276abc6">24.5</span></p></td><td class="cl-f27bbbe9"><p class="cl-f27b9f1e"><span class="cl-f276abc6">0.500</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f27bbbde"><p class="cl-f27b9f1e"><span class="cl-f276abc6">32.0</span></p></td><td class="cl-f27bbbdf"><p class="cl-f27b9f1e"><span class="cl-f276abc6">0.444</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f27bbbe8"><p class="cl-f27b9f1e"><span class="cl-f276abc6">39.5</span></p></td><td class="cl-f27bbbe9"><p class="cl-f27b9f1e"><span class="cl-f276abc6">0.410</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f27bbbf2"><p class="cl-f27b9f1e"><span class="cl-f276abc6">52.5</span></p></td><td class="cl-f27bbbf3"><p class="cl-f27b9f1e"><span class="cl-f276abc6">0.267</span></p></td></tr></tbody></table></div></template>
+<div class="flextable-shadow-host" id="bf713d8a-84c3-4109-a42f-6d01f8ab2473"></div>
+<script>
+var dest = document.getElementById("bf713d8a-84c3-4109-a42f-6d01f8ab2473");
+var template = document.getElementById("daca9982-d130-49ff-bb65-20715b5865f0");
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+</script>
+
+<p>The split at 52.5 years of age has the lowest Gini value. Accordingly, we would split the data between speakers who are younger than 52.5 and speakers who are older than 52.5 years of age. The lowest Gini value for any age split would also be the Gini value that would be compared to other variables.</p>
+<p>The same procedure that we have used to determine potential splits for a numeric variable would apply to an ordinal variable with only two differences:</p>
+<ul>
+<li>The Gini values are calculated for the actual levels and not the means between variable levels.</li>
+<li>The Gini value is nor calculated for the lowest and highest level as the calculation of the Gini values is impossible for extreme values. Extreme levels can, therefore, not serve as a potential split location.</li>
+</ul>
+<p>When dealing with categorical variables with more than two levels, the situation is slightly more complex as we would also have to calculate the Gini values for combinations of variable levels. While the calculations are, in principle, analogous to the ones performed for binary of nominal categorical variables, we would also have to check if combinations would lead to improved splits. For instance, imagine we have a variable with categories A, B, and C. In such cases we would not only have to calculate the Gini scores for A, B, and C but also for A plus B, A plus C, and B plus C. Note that we ignore the combination A plus B plus C as this combination would include all other potential combinations.</p>
+</div>
+<div id="conditional-inference-trees" class="section level2 hasAnchor" number="2.1">
+<h2><span class="header-section-number">2.1</span> Conditional Inference Trees<a href="what-are-tree-based-models-and-how-do-they-work.html#conditional-inference-trees" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Conditional Inference Trees (CITs) are much better at determining the <em>true</em> effect of a predictor, i.e. the effect of a predictor if all other effects are simultaneously considered. In contrast to CARTs, CITs use p-values to determine splits in the data. Below is a conditional inference tree which shows how and what factors contribute to the use of discourse <em>like</em>. In conditional inference trees predictors are only included if the predictor is significant (i.e. if these predictors are necessary).</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb29-1" aria-hidden="true" tabindex="-1"></a>citdata <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(<span class="st">&quot;https://slcladal.github.io/data/treedata.txt&quot;</span>, <span class="at">header =</span> T, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>)</span>
+<span id="cb29-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">111</span>)        <span class="co"># set.seed</span></span>
+<span id="cb29-3"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># apply bonferroni correction (1 minus alpha multiplied by n of predictors)</span></span>
+<span id="cb29-4"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb29-4" aria-hidden="true" tabindex="-1"></a>control <span class="ot">=</span> <span class="fu">ctree_control</span>(<span class="at">mincriterion =</span> <span class="dv">1</span><span class="sc">-</span>(.<span class="dv">05</span><span class="sc">*</span><span class="fu">ncol</span>(citdata)<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb29-5"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># convert character strings to factors</span></span>
+<span id="cb29-6"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb29-6" aria-hidden="true" tabindex="-1"></a>citdata <span class="ot">&lt;-</span> citdata <span class="sc">%&gt;%</span></span>
+<span id="cb29-7"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb29-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate_if</span>(is.character, factor)</span>
+<span id="cb29-8"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co"># create initial conditional inference tree model</span></span>
+<span id="cb29-9"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb29-9" aria-hidden="true" tabindex="-1"></a>citd.ctree <span class="ot">&lt;-</span> partykit<span class="sc">::</span><span class="fu">ctree</span>(LikeUser <span class="sc">~</span> Age <span class="sc">+</span> Gender <span class="sc">+</span> Status,</span>
+<span id="cb29-10"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb29-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> citdata)</span>
+<span id="cb29-11"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(citd.ctree, <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">8</span>)) <span class="co"># plot final ctree</span></span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/cit1b-1.png" width="672" /></p>
+</div>
+<div id="prettifying-your-cit-tree" class="section level2 unnumbered hasAnchor">
+<h2>Prettifying your CIT tree<a href="what-are-tree-based-models-and-how-do-they-work.html#prettifying-your-cit-tree" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The easiest and most common way to visualize CITs is to simply use the <code>plot</code> function from <code>base R</code>. However, using this function does not allow to adapt and customize the visualization except for some very basic parameters. The <code>ggparty</code> function allows to use the <code>ggplot</code> syntax to customize CITs which allows more adjustments and is more aesthetically pleasing.</p>
+<p>To generate this customized CIT, we activate the <code>ggparty</code> package and extract the significant p-values from the CIT object. We then plot the CIT and define the nodes, edges, and text elements as shown below.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract p-values</span></span>
+<span id="cb30-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-2" aria-hidden="true" tabindex="-1"></a>pvals <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">nodeapply</span>(citd.ctree, <span class="at">ids =</span> <span class="fu">nodeids</span>(citd.ctree), <span class="cf">function</span>(n) <span class="fu">info_node</span>(n)<span class="sc">$</span>p.value))</span>
+<span id="cb30-3"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-3" aria-hidden="true" tabindex="-1"></a>pvals <span class="ot">&lt;-</span> pvals[pvals <span class="sc">&lt;</span>.<span class="dv">05</span>]</span>
+<span id="cb30-4"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting</span></span>
+<span id="cb30-5"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggparty</span>(citd.ctree) <span class="sc">+</span></span>
+<span id="cb30-6"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_edge</span>() <span class="sc">+</span></span>
+<span id="cb30-7"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_edge_label</span>() <span class="sc">+</span></span>
+<span id="cb30-8"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_node_label</span>(<span class="at">line_list =</span> <span class="fu">list</span>(<span class="fu">aes</span>(<span class="at">label =</span> splitvar),</span>
+<span id="cb30-9"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-9" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">&quot;N=&quot;</span>, nodesize, <span class="st">&quot;, p&quot;</span>, </span>
+<span id="cb30-10"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-10" aria-hidden="true" tabindex="-1"></a>                                                      <span class="fu">ifelse</span>(pvals <span class="sc">&lt;</span> .<span class="dv">001</span>, <span class="st">&quot;&lt;.001&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;=&quot;</span>, <span class="fu">round</span>(pvals, <span class="dv">3</span>)))), </span>
+<span id="cb30-11"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-11" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">size =</span> <span class="dv">10</span>)),</span>
+<span id="cb30-12"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">line_gpar =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">size =</span> <span class="dv">13</span>), </span>
+<span id="cb30-13"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-13" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">list</span>(<span class="at">size =</span> <span class="dv">10</span>)), </span>
+<span id="cb30-14"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-14" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ids =</span> <span class="st">&quot;inner&quot;</span>) <span class="sc">+</span></span>
+<span id="cb30-15"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_node_label</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">&quot;Node &quot;</span>, id, <span class="st">&quot;, N = &quot;</span>, nodesize)),</span>
+<span id="cb30-16"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">ids =</span> <span class="st">&quot;terminal&quot;</span>, <span class="at">nudge_y =</span> <span class="sc">-</span><span class="fl">0.0</span>, <span class="at">nudge_x =</span> <span class="fl">0.01</span>) <span class="sc">+</span></span>
+<span id="cb30-17"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_node_plot</span>(<span class="at">gglist =</span> <span class="fu">list</span>(</span>
+<span id="cb30-18"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;&quot;</span>, <span class="at">fill =</span> LikeUser),</span>
+<span id="cb30-19"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-19" aria-hidden="true" tabindex="-1"></a>             <span class="at">position =</span> <span class="fu">position_fill</span>(), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>),</span>
+<span id="cb30-20"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_minimal</span>(),</span>
+<span id="cb30-21"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;gray50&quot;</span>, <span class="st">&quot;gray80&quot;</span>), <span class="at">guide =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb30-22"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)),</span>
+<span id="cb30-23"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">&quot;&quot;</span>), </span>
+<span id="cb30-24"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">&quot;Probability&quot;</span>),</span>
+<span id="cb30-25"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;&quot;</span>, <span class="at">group =</span> LikeUser,</span>
+<span id="cb30-26"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-26" aria-hidden="true" tabindex="-1"></a>                  <span class="at">label =</span> <span class="fu">stat</span>(count)),</span>
+<span id="cb30-27"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-27" aria-hidden="true" tabindex="-1"></a>              <span class="at">stat =</span> <span class="st">&quot;count&quot;</span>, <span class="at">position =</span> <span class="fu">position_fill</span>(), <span class="at">vjust =</span> <span class="fl">1.1</span>)),</span>
+<span id="cb30-28"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb30-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">shared_axis_labels =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/pretty-1.png" width="672" /></p>
+<p>We can also use <code>position_dodge</code> (instead of <code>position_fill</code>) to display frequencies rather than probabilities as shown below.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting</span></span>
+<span id="cb31-2"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggparty</span>(citd.ctree) <span class="sc">+</span></span>
+<span id="cb31-3"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_edge</span>() <span class="sc">+</span></span>
+<span id="cb31-4"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_edge_label</span>() <span class="sc">+</span></span>
+<span id="cb31-5"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_node_label</span>(<span class="at">line_list =</span> <span class="fu">list</span>(<span class="fu">aes</span>(<span class="at">label =</span> splitvar),</span>
+<span id="cb31-6"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-6" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">&quot;N=&quot;</span>, nodesize, <span class="st">&quot;, p&quot;</span>, </span>
+<span id="cb31-7"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-7" aria-hidden="true" tabindex="-1"></a>                                                      <span class="fu">ifelse</span>(pvals <span class="sc">&lt;</span> .<span class="dv">001</span>, <span class="st">&quot;&lt;.001&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;=&quot;</span>, <span class="fu">round</span>(pvals, <span class="dv">3</span>)))), </span>
+<span id="cb31-8"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-8" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">size =</span> <span class="dv">10</span>)),</span>
+<span id="cb31-9"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">line_gpar =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">size =</span> <span class="dv">13</span>), </span>
+<span id="cb31-10"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-10" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">list</span>(<span class="at">size =</span> <span class="dv">10</span>)), </span>
+<span id="cb31-11"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ids =</span> <span class="st">&quot;inner&quot;</span>) <span class="sc">+</span></span>
+<span id="cb31-12"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_node_label</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">&quot;Node &quot;</span>, id, <span class="st">&quot;, N = &quot;</span>, nodesize)),</span>
+<span id="cb31-13"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">ids =</span> <span class="st">&quot;terminal&quot;</span>, <span class="at">nudge_y =</span> <span class="fl">0.01</span>, <span class="at">nudge_x =</span> <span class="fl">0.01</span>) <span class="sc">+</span></span>
+<span id="cb31-14"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_node_plot</span>(<span class="at">gglist =</span> <span class="fu">list</span>(</span>
+<span id="cb31-15"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;&quot;</span>, <span class="at">fill =</span> LikeUser),</span>
+<span id="cb31-16"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">position =</span> <span class="fu">position_dodge</span>(), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>),</span>
+<span id="cb31-17"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_minimal</span>(),</span>
+<span id="cb31-18"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(), </span>
+<span id="cb31-19"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()),</span>
+<span id="cb31-20"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;gray50&quot;</span>, <span class="st">&quot;gray80&quot;</span>), <span class="at">guide =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb31-21"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">20</span>),</span>
+<span id="cb31-22"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-22" aria-hidden="true" tabindex="-1"></a>                         <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>)),</span>
+<span id="cb31-23"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">&quot;&quot;</span>), </span>
+<span id="cb31-24"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">&quot;Frequency&quot;</span>),</span>
+<span id="cb31-25"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;&quot;</span>, <span class="at">group =</span> LikeUser,</span>
+<span id="cb31-26"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-26" aria-hidden="true" tabindex="-1"></a>                    <span class="at">label =</span> <span class="fu">stat</span>(count)),</span>
+<span id="cb31-27"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-27" aria-hidden="true" tabindex="-1"></a>                <span class="at">stat =</span> <span class="st">&quot;count&quot;</span>, </span>
+<span id="cb31-28"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-28" aria-hidden="true" tabindex="-1"></a>                <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.9</span>), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.7</span>)),</span>
+<span id="cb31-29"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb31-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">shared_axis_labels =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/plotctree-1.png" width="672" /></p>
+</div>
+<div id="problems-of-conditional-inference-trees" class="section level2 unnumbered hasAnchor">
+<h2>Problems of Conditional Inference Trees<a href="what-are-tree-based-models-and-how-do-they-work.html#problems-of-conditional-inference-trees" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Like other tree-based methods, CITs are very intuitive, multivariate, non-parametric, they do not require large data sets, and they are easy to implement. Despite these obvious advantages, they have at least one major short coming compared to other, more sophisticated tree-structure models (in addition to the general issues that tree-structure models exhibit as discussed above: they are prone to <strong>overfitting</strong> which means that they fit the observed data very well but preform much worse when being applied to new data.</p>
+<p>An extension which remedies this problem is to use a so-called ensemble method which grows many varied trees. The most common ensemble method is called a <em>Random Forest Analysis</em> and, unfortunately, we cannot deal with random forests here (but if you are interested, check out <a href="https://ladal.edu.au/tree.html">this tutorial</a>).</p>
+</div>
+<div id="citation-session-info" class="section level2 unnumbered hasAnchor">
+<h2>Citation &amp; Session Info<a href="what-are-tree-based-models-and-how-do-they-work.html#citation-session-info" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Schweinberger, Martin. 2023. <em>An introduction to conditional inference trees in R</em>. Brisbane: The University of Queensland. url: <a href="https://github.com/MartinSchweinberger/TreesUBonn/treesubonn.html" class="uri">https://github.com/MartinSchweinberger/TreesUBonn/treesubonn.html</a> (Version 2023.01.19).</p>
+<pre><code>@manual{schweinberger2023tree,
+  author = {Schweinberger, Martin},
+  title = {An introduction to conditional inference trees in R},
+  note = {https://github.com/MartinSchweinberger/TreesUBonn/treesubonn.html},
+  year = {2023},
+  organization = &quot;The University of Queensland, Australia. School of Languages and Cultures},
+  address = {Brisbane},
+  edition = {2023.01.19}
+}</code></pre>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="what-are-tree-based-models-and-how-do-they-work.html#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.2.1 RC (2022-06-17 r82510 ucrt)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 10 x64 (build 19045)
+## 
+## Matrix products: default
+## 
+## locale:
+## [1] LC_COLLATE=German_Germany.utf8  LC_CTYPE=German_Germany.utf8    LC_MONETARY=German_Germany.utf8
+## [4] LC_NUMERIC=C                    LC_TIME=German_Germany.utf8    
+## 
+## attached base packages:
+## [1] grid      stats     graphics  grDevices datasets  utils     methods   base     
+## 
+## other attached packages:
+##  [1] ggparty_1.0.0   ggplot2_3.4.0   partykit_1.2-16 mvtnorm_1.1-3   libcoin_1.0-9   Gmisc_3.0.1    
+##  [7] htmlTable_2.4.1 Rcpp_1.0.9      flextable_0.8.3 dplyr_1.0.10    tree_1.0-42    
+## 
+## loaded via a namespace (and not attached):
+##  [1] lubridate_1.9.0     RColorBrewer_1.1-3  tools_4.2.1         backports_1.4.1     bslib_0.4.2        
+##  [6] utf8_1.2.2          R6_2.5.1            rpart_4.1.16        Hmisc_4.7-2         colorspace_2.0-3   
+## [11] nnet_7.3-17         withr_2.5.0         gridExtra_2.3       tidyselect_1.2.0    curl_5.0.0         
+## [16] compiler_4.2.1      cli_3.6.0           xml2_1.3.3          officer_0.5.1       labeling_0.4.2     
+## [21] bookdown_0.31       sass_0.4.4          scales_1.2.1        checkmate_2.1.0     askpass_1.1        
+## [26] systemfonts_1.0.4   stringr_1.5.0       digest_0.6.31       foreign_0.8-82      rmarkdown_2.19     
+## [31] gfonts_0.2.0        base64enc_0.1-3     jpeg_0.1-10         pkgconfig_2.0.3     htmltools_0.5.4    
+## [36] fastmap_1.1.0       highr_0.10          htmlwidgets_1.6.1   rlang_1.0.6         rstudioapi_0.14    
+## [41] httpcode_0.3.0      shiny_1.7.4         farver_2.1.1        jquerylib_0.1.4     generics_0.1.3     
+## [46] jsonlite_1.8.4      zip_2.2.2           magrittr_2.0.3      Formula_1.2-4       interp_1.1-3       
+## [51] Matrix_1.4-1        munsell_0.5.0       fansi_1.0.3         abind_1.4-5         gdtools_0.3.0      
+## [56] lifecycle_1.0.3     stringi_1.7.12      yaml_2.3.6          inum_1.0-4          promises_1.2.0.1   
+## [61] crayon_1.5.2        deldir_1.0-6        lattice_0.20-45     splines_4.2.1       knitr_1.41         
+## [66] pillar_1.8.1        uuid_1.1-0          crul_1.3            XML_3.99-0.13       glue_1.6.2         
+## [71] evaluate_0.19       latticeExtra_0.6-30 data.table_1.14.6   renv_0.16.0         vctrs_0.5.1        
+## [76] png_0.1-8           httpuv_1.6.8        gtable_0.3.1        openssl_2.0.5       cachem_1.0.6       
+## [81] xfun_0.36           mime_0.12           xtable_1.8-4        later_1.3.0         survival_3.3-1     
+## [86] tibble_3.1.8        forestplot_3.1.1    memoise_2.0.1       cluster_2.1.3       timechange_0.2.0   
+## [91] ellipsis_0.3.2</code></pre>
+<hr />
+<p><a href="https://github.com/MartinSchweinberger/TreesUBonn">Back to HOME</a></p>
+<hr />
+</div>
+<div id="references" class="section level2 unnumbered hasAnchor">
+<h2>References<a href="what-are-tree-based-models-and-how-do-they-work.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-gries2021statistics" class="csl-entry">
+Gries, Stefan Th. 2021. <em>Statistics for Linguistics Using r: A Practical Introduction</em>. Berlin &amp; New York: Mouton de Gruyter.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="practice.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/MartinSchweinberger/TreesUBonn/edit/master/02-trees.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/MartinSchweinberger/TreesUBonn/blob/master/02-trees.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

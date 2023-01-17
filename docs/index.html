@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>An introduction to conditional inference trees in R</title>
   <meta name="description" content="An introduction to conditional inference trees in R" />
-  <meta name="generator" content="bookdown 0.29 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.31 and GitBook 2.6.7" />
 
   <meta property="og:title" content="An introduction to conditional inference trees in R" />
   <meta property="og:type" content="book" />
@@ -31,7 +31,7 @@
   
   
 
-<link rel="next" href="the-pool-of-tears.html"/>
+<link rel="next" href="what-are-tree-based-models-and-how-do-they-work.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -52,8 +52,73 @@
 <link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
 <link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/tabwid-1.1.2/tabwid.css" rel="stylesheet" />
 
 
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 <style type="text/css">
 /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
@@ -94,9 +159,26 @@ div.csl-indent {
 <li><a href="./">Conditional Inference Trees in R</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="the-pool-of-tears.html"><a href="the-pool-of-tears.html"><i class="fa fa-check"></i><b>2</b> The pool of tears</a></li>
-<li class="chapter" data-level="3" data-path="a-caucus-race-and-a-long-tale.html"><a href="a-caucus-race-and-a-long-tale.html"><i class="fa fa-check"></i><b>3</b> A caucus-race and a long tale</a></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#about-me"><i class="fa fa-check"></i><b>1.1</b> About me</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#about-the-workshop"><i class="fa fa-check"></i><b>1.2</b> About the workshop</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#advantages"><i class="fa fa-check"></i><b>1.3</b> Advantages</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#problems"><i class="fa fa-check"></i>Problems</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html"><i class="fa fa-check"></i><b>2</b> What are tree-based models and how do they work?</a>
+<ul>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#classification-and-regression-trees"><i class="fa fa-check"></i>Classification And Regression Trees</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#tree-based-models-in-r"><i class="fa fa-check"></i>Tree-Based Models in R</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#how-tree-based-methods-work"><i class="fa fa-check"></i>How Tree-Based Methods Work</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#splitting-numeric-ordinal-and-true-categorical-variables"><i class="fa fa-check"></i>Splitting numeric, ordinal, and true categorical variables</a></li>
+<li class="chapter" data-level="2.1" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#conditional-inference-trees"><i class="fa fa-check"></i><b>2.1</b> Conditional Inference Trees</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#prettifying-your-cit-tree"><i class="fa fa-check"></i>Prettifying your CIT tree</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#problems-of-conditional-inference-trees"><i class="fa fa-check"></i>Problems of Conditional Inference Trees</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#citation-session-info"><i class="fa fa-check"></i>Citation &amp; Session Info</a></li>
+<li class="chapter" data-level="" data-path="what-are-tree-based-models-and-how-do-they-work.html"><a href="what-are-tree-based-models-and-how-do-they-work.html#references"><i class="fa fa-check"></i>References</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="practice.html"><a href="practice.html"><i class="fa fa-check"></i><b>3</b> Practice</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 </ul>
@@ -123,7 +205,39 @@ div.csl-indent {
 </div>
 <div id="introduction" class="section level1 hasAnchor" number="1">
 <h1><span class="header-section-number">Session 1</span> Introduction<a href="index.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>This tutorial focuses on conditional inference trees and their implementation in R.</p>
+<p>This workshop focuses on conditional inference trees and their implementation in R.</p>
+<p><img src="https://slcladal.github.io/images/martinsface.jpg" width="30%" style="float:right; padding:10px" /></p>
+<div id="about-me" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> About me<a href="index.html#about-me" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Quantitative corpus-linguist</p>
+<ul>
+<li><p>Lecturer in Applied linguistics at the University of Queensland (UQ)<br />
+</p></li>
+<li><p>Associate Professor II at the Arctic University of Norway in Tromsø (UiT)</p></li>
+<li><p>Co-Director of the Language Technology and Data Analysis Laboratory (LADAL) at UQ</p></li>
+<li><p>Principal Data Science Advisor to the AcqVA Aurora Lab at UiT</p></li>
+<li><p>Projects:</p>
+<ul>
+<li>Australian Text Analytics Platform (ATAP)<br />
+</li>
+<li>Language Data Commons of Australia (LDaCA)</li>
+</ul></li>
+</ul>
+<p>Studied Philosophy, English Philology and Psychology in Kassel and Galway
+PhD in Hamburg, Post docs (or similar positions) at the Linguistic Diversity in Urban Areas Excellence Cluster (LiMA), the FU Berlin, the Universities of Greifswald, Luneburg, and Kassel</p>
+</div>
+<div id="about-the-workshop" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> About the workshop<a href="index.html#about-the-workshop" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Timeline | Table of Contents
+* Introduction<br />
+* When to use trees
+* What are pros and cons?<br />
+* Case study | Practice<br />
+* Outro</p>
+<p>During practice, we will use a Jupyter notebook and you can<br />
+* sit back and follow<br />
+* you can practice using the data provided by me<br />
+* you can try and use your own data (but I cannot help you in modifying the code)</p>
 <div class="warning" style="padding:0.1em; background-color:#f2f2f2; color:#51247a">
 <span>
 <p style="margin-top:1em; text-align:center">
@@ -138,12 +252,44 @@ div.csl-indent {
 <p>Tree-structure models fall into the machine-learning rather than the inference statistics category as they are commonly used for classification and prediction tasks rather than explanation of relationships between variables. The tree structure represents recursive partitioning of the data to minimize residual deviance that is based on iteratively splitting the data into two subsets.</p>
 <p>The most basic type of tree-structure model is a decision tree which is a type of classification and regression tree (CART). A more elaborate version of a CART is called a Conditional Inference Tree (CIT). The difference between a CART and a CIT is that CITs use significance tests, e.g. the p-values, to select and split variables rather than some information measures like the Gini coefficient <span class="citation">(<a href="#ref-gries2021statistics" role="doc-biblioref">Gries 2021</a>)</span>.</p>
 <p>Like random forests, inference trees are non-parametric and thus do not rely on distributional requirements (or at least on fewer).</p>
+</div>
+<div id="advantages" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> Advantages<a href="index.html#advantages" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Several advantages have been associated with using tree-based models:</p>
+<ol style="list-style-type: decimal">
+<li><p>Tree-structure models are very useful because they are <strong>extremely flexible</strong> as they can deal with different types of variables and provide a very good understanding of the structure in the data.</p></li>
+<li><p>Tree-structure models have been deemed particularly interesting for linguists because they can handle <strong>moderate sample sizes</strong> and many high-order interactions better then regression models.</p></li>
+<li><p>Tree-structure models are (supposedly) better at detecting <strong>non-linear or non-monotonic relationships</strong> between predictors and dependent variables. This also means that they are better at finding and displaying interaction sinvolving many predictors.</p></li>
+<li><p>Tree-structure models are <strong>easy</strong> to implement in R and do not require the model selection, validation, and diagnostics associated with regression models.</p></li>
+<li><p>Tree-structure models can be used as <strong>variable-selection</strong> procedure which informs about which variables have any sort of significant relationship with the dependent variable and can thereby inform model fitting.</p></li>
+</ol>
+</div>
+<div id="problems" class="section level2 unnumbered hasAnchor">
+<h2>Problems<a href="index.html#problems" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Despite these potential advantages, a word of warning is in order: <span class="citation">Gries (<a href="#ref-gries2021statistics" role="doc-biblioref">2021</a>)</span> admits that tree-based models can be very useful but there are some issues that but some serious short-comings of tree-structure models remain under-explored. For instance,</p>
+<ol style="list-style-type: decimal">
+<li><p>Forest-models (Random Forests and Boruta) only inform about the <strong>importance</strong> of a variable but not if the variable is important as a main effect or as part of interactions (or both)! The importance only shows that there is some important connection between the predictor and the dependent variable. While partial dependence plots (see <a href="https://christophm.github.io/interpretable-ml-book/pdp.html">here</a> for more information) offer a remedy for this shortcoming to a certain degree, regression models are still much better at dealing with this issue.</p></li>
+<li><p>Simple tree-structure models have been shown to fail in detecting the correct predictors if the variance is solely determined by a <strong>single interaction</strong> <span class="citation">(<a href="#ref-gries2021statistics" role="doc-biblioref">Gries 2021, chap. 7.3</a>)</span>. This failure is caused by the fact that the predictor used in the first split of a tree is selected as the one with the strongest main effect <span class="citation">(<a href="#ref-boulesteix2015interaction" role="doc-biblioref">Boulesteix et al. 2015, 344</a>)</span>. This issue can, however, be avoided by hard-coding the interactions as predictors plus using ensemble methods such as random forests rather than individual trees <span class="citation">(see <a href="#ref-gries2021statistics" role="doc-biblioref">Gries 2021, chap. 7.3</a>)</span>.</p></li>
+<li><p>Another shortcoming is that tree-structure models partition the data (rather than “fitting a line” through the data which can lead to more <strong>coarse-grained predictions</strong> compared to regression models when dealing with numeric dependent variables <span class="citation">(again, see <a href="#ref-gries2021statistics" role="doc-biblioref">Gries 2021, chap. 7.3</a>)</span>.</p></li>
+<li><p><span class="citation">Boulesteix et al. (<a href="#ref-boulesteix2015interaction" role="doc-biblioref">2015, 341</a>)</span> state that high correlations between predictors can hinder the <strong>detection of interactions</strong> when using small data sets. However, regression do not fare better here as they are even more strongly affected by (multi-)collinearity <span class="citation">(see <a href="#ref-gries2021statistics" role="doc-biblioref">Gries 2021, chap. 7.3</a>)</span>.</p></li>
+<li><p>Tree-structure models are bad a detecting interactions when the variables have <strong>strong main effects</strong> which is, unfortunately, common when dealing with linguistic data <span class="citation">(<a href="#ref-wrigt2016interac" role="doc-biblioref">Wright, Ziegler, and König 2016</a>)</span>.</p></li>
+<li><p>Tree-structure models cannot handle <strong>factorial variables</strong> with many levels (more than 53 levels) which is very common in linguistics where individual speakers or items are variables.</p></li>
+<li><p>Forest-models (Random Forests and Boruta) have been deemed to be better at dealing with small data sets. However, this is only because the analysis is based on <strong>permutations</strong> of the original small data set. As such, forest-based models only appear to be better at handling small data sets because they “blow up” the data set rather than really being better at analyzing the original data.</p></li>
+</ol>
+<p>Before we implement a conditional inference tree in R, we will have a look at how decision trees work. We will do this in more detail here as random forests and Boruta analyses are extensions of inference trees and are therefore based on the same concepts.</p>
 
 </div>
-<h3> A caucus-race and a long tale<a href="a-caucus-race-and-a-long-tale.html#a-caucus-race-and-a-long-tale" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<h3>References</h3>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-boulesteix2015interaction" class="csl-entry">
+Boulesteix, Anne-Laure, Silke Janitza, Alexander Hapfelmeier, Kristel Van Steen, and Carolin Strobl. 2015. <span>“Letter to the Editor: On the Term <span>‘Interaction’</span> and Related Phrases in the Literature on RandomForests.”</span> <em>Briefings in Bioinformatics</em> 16 (2): 338–45. <a href="https://academic.oup.com/bib/article/16/2/338/246566">https://academic.oup.com/bib/article/16/2/338/246566</a>.
+</div>
 <div id="ref-gries2021statistics" class="csl-entry">
 Gries, Stefan Th. 2021. <em>Statistics for Linguistics Using r: A Practical Introduction</em>. Berlin &amp; New York: Mouton de Gruyter.
+</div>
+<div id="ref-wrigt2016interac" class="csl-entry">
+Wright, Marvin N., Andreas Ziegler, and Inke R. König. 2016. <span>“Do Little Interactions Get Lost in Dark Random Forests?”</span> 17 (145). <a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-0995-8">https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-0995-8</a>.
 </div>
 </div>
             </section>
@@ -152,7 +298,7 @@ Gries, Stefan Th. 2021. <em>Statistics for Linguistics Using r: A Practical Intr
         </div>
       </div>
 
-<a href="the-pool-of-tears.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="what-are-tree-based-models-and-how-do-they-work.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -206,6 +352,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

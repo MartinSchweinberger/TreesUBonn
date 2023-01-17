@@ -1,7 +1,5 @@
 # What are tree-based models and how do they work?
 
-
-
 ## Classification And Regression Trees {-}
 
 Below is an example of a decision tree which shows what what response to expect - in this case whether a speaker uses discourse *like* or not. Decision trees, like all CARTs and CITs, answer a simple question, namely *How do we best classify elements based on the given predictors?*. The answer that decision trees provide is the classification of the elements based on the levels of the predictors. In simple decision trees, all predictors, even those that are not significant are included in the decision tree. The decision tree shows that the best (or most important) predictor for the use of discourse *like* is age as it is the highest node. Among young speakers, those with high status use *like* more compared with speakers of lower social status. Among old speakers, women use discourse *like* more than men.
@@ -10,12 +8,19 @@ Below is an example of a decision tree which shows what what response to expect 
 install.packages("tree")
 install.packages("dplyr")
 install.packages("grid")
+install.packages("flextable")
+install.packages("partykit")
+install.packages("ggparty")
 ```
 
 ```{r cit1a, echo = F, message=FALSE, warning=FALSE}
 library(tree)
 library(dplyr)
 library(grid)
+library(flextable)
+library(Gmisc)
+library(partykit)
+library(ggparty)
 # load data
 citdata <- read.delim("https://slcladal.github.io/data/treedata.txt", header = T, sep = "\t") %>%
   # convert character strings to factors
@@ -511,7 +516,7 @@ ggparty(citd.ctree) +
 
 Like other tree-based methods, CITs are very intuitive, multivariate, non-parametric, they do not require large data sets, and they are easy to implement. Despite these obvious advantages, they have at least one major short coming compared to other, more sophisticated tree-structure models (in addition to the general issues that tree-structure models exhibit as discussed above: they are prone to **overfitting** which means that they fit the observed data very well but preform much worse when being applied to new data.
 
-An extension which remedies this problem is to use a so-called ensemble method which grows many varied trees. The most common ensemble method is called a *Random Forest Analysis* and will have a look at how Random Forests work and how to implement them in R in the next section. 
+An extension which remedies this problem is to use a so-called ensemble method which grows many varied trees. The most common ensemble method is called a *Random Forest Analysis* and, unfortunately, we cannot deal with random forests here (but if you are interested, check out [this tutorial](https://ladal.edu.au/tree.html)). 
 
 
 ## Citation & Session Info {-}
@@ -521,7 +526,7 @@ Schweinberger, Martin. 2023. *An introduction to conditional inference trees in
 ```
 @manual{schweinberger2023tree,
   author = {Schweinberger, Martin},
-  title = {An introduction to conditional inference trees in R},
+  title = {An introduction to conditional inference trees in R},
   note = {https://github.com/MartinSchweinberger/TreesUBonn/treesubonn.html},
   year = {2023},
   organization = "The University of Queensland, Australia. School of Languages and Cultures},
@@ -536,8 +541,6 @@ sessionInfo()
 
 
 ***
-
-[Back to top](#introduction)
 
 [Back to HOME](https://github.com/MartinSchweinberger/TreesUBonn)
 
