@@ -7,13 +7,8 @@ Please just follow the link provided below to open the Jupyter notebook.
 <div class="warning" style='padding:0.1em; background-color:#f2f2f2; color:#51247a'>
 <span>
 <p style='margin-top:1em; text-align:center'>
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/SLCLADAL/interactive-notebooks/main?labpath=notebooks%2Ftreesubonn_bi.ipynb)<br>
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/SLCLADAL/interactive-notebooks/main?labpath=notebooks%2Ftreesubonn_bi.ipynb)<br> [**Click this link to open an interactive version of this tutorial on Binder.org**.](https://mybinder.org/v2/gh/SLCLADAL/interactive-notebooks/main?labpath=notebooks%2Ftreesubonn_bi.ipynb)<br>
 <br>
-
-[**Click this link to open an interactive version of this tutorial on Binder.org**.](https://mybinder.org/v2/gh/SLCLADAL/interactive-notebooks/main?labpath=notebooks%2Ftreesubonn_bi.ipynb)<br>
-<br>
-
-
 If the notebook on Binder does not work, please [**click this link to open an interactive version of this tutorial on Google Colab**](https://colab.research.google.com/drive/1yi0hwcwfl5k01XfmpkEgpOf1jL1ObKcC?usp=sharing). <br> This interactive Jupyter notebook allows you to execute code yourself and you can also change and edit the notebook, e.g. you can change code and upload your own data. <br>
 </p>
 <p style='margin-left:1em;'>
