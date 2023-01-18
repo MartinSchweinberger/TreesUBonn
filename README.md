@@ -7,4 +7,4 @@ This workshop focuses on conditional inference trees and their implementation in
 The website for the workshop is available via [this link](https://martinschweinberger.github.io/TreesUBonn/index.html).
 
 
-A Jupyter notebook that contains the practical exerciser is available [here](https://colab.research.google.com/drive/1yi0hwcwfl5k01XfmpkEgpOf1jL1ObKcC?usp=sharing). 
+A Jupyter notebook that contains the practical exercise is available [here](https://mybinder.org/v2/gh/SLCLADAL/interactive-notebooks/main?labpath=notebooks%2Ftreesubonn_bi.ipynb). 
