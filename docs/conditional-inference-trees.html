@@ -175,8 +175,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="" data-path="conditional-inference-trees.html"><a href="conditional-inference-trees.html"><i class="fa fa-check"></i>Conditional Inference Trees</a>
 <ul>
-<li class="chapter" data-level="0.1" data-path="conditional-inference-trees.html"><a href="conditional-inference-trees.html#example-1-disourse-like"><i class="fa fa-check"></i><b>0.1</b> Example 1: disourse like</a></li>
-<li class="chapter" data-level="0.2" data-path="conditional-inference-trees.html"><a href="conditional-inference-trees.html#example-2-prepositions"><i class="fa fa-check"></i><b>0.2</b> Example 2: Prepositions</a></li>
+<li class="chapter" data-level="" data-path="conditional-inference-trees.html"><a href="conditional-inference-trees.html#example-1-disourse-like"><i class="fa fa-check"></i>Example 1: disourse like</a></li>
+<li class="chapter" data-level="" data-path="conditional-inference-trees.html"><a href="conditional-inference-trees.html#example-2-prepositions"><i class="fa fa-check"></i>Example 2: Prepositions</a></li>
 <li class="chapter" data-level="" data-path="conditional-inference-trees.html"><a href="conditional-inference-trees.html#prettifying-your-cit-tree"><i class="fa fa-check"></i>Prettifying your CIT tree</a></li>
 <li class="chapter" data-level="" data-path="conditional-inference-trees.html"><a href="conditional-inference-trees.html#extensions-of-conditional-inference-trees"><i class="fa fa-check"></i>Extensions of Conditional Inference Trees</a></li>
 </ul></li>
@@ -203,8 +203,8 @@ div.csl-indent {
 <div id="conditional-inference-trees" class="section level1 unnumbered hasAnchor">
 <h1>Conditional Inference Trees<a href="conditional-inference-trees.html#conditional-inference-trees" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>Conditional Inference Trees (CITs) are much better at determining the <em>true</em> effect of a predictor, i.e. the effect of a predictor if all other effects are simultaneously considered. In contrast to CARTs, CITs use p-values to determine splits in the data. Below is a conditional inference tree which shows how and what factors contribute to the use of discourse <em>like</em>. In conditional inference trees predictors are only included if the predictor is significant (i.e. if these predictors are necessary).</p>
-<div id="example-1-disourse-like" class="section level2 hasAnchor" number="0.1">
-<h2><span class="header-section-number">0.1</span> Example 1: disourse like<a href="conditional-inference-trees.html#example-1-disourse-like" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="example-1-disourse-like" class="section level2 unnumbered hasAnchor">
+<h2>Example 1: disourse like<a href="conditional-inference-trees.html#example-1-disourse-like" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>In a first step, we load the data (in this case, the data is stored online and made available via the LADAL github repo).</p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="conditional-inference-trees.html#cb30-1" aria-hidden="true" tabindex="-1"></a>citdata <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(<span class="st">&quot;https://slcladal.github.io/data/treedata.txt&quot;</span>, <span class="at">header =</span> T, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>)</span>
 <span id="cb30-2"><a href="conditional-inference-trees.html#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># inspect the data (head shows the first 6 lines)</span></span>
@@ -245,8 +245,8 @@ div.csl-indent {
 <span id="cb37-4"><a href="conditional-inference-trees.html#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(citd.ctree, <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">8</span>)) <span class="co"># plot final ctree</span></span></code></pre></div>
 <p><img src="bookdownproj_files/figure-html/cita6-1.png" width="672" /></p>
 </div>
-<div id="example-2-prepositions" class="section level2 hasAnchor" number="0.2">
-<h2><span class="header-section-number">0.2</span> Example 2: Prepositions<a href="conditional-inference-trees.html#example-2-prepositions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="example-2-prepositions" class="section level2 unnumbered hasAnchor">
+<h2>Example 2: Prepositions<a href="conditional-inference-trees.html#example-2-prepositions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>We now proceed with a different example that uses a numeric dependent variable. In this example, we want to see what factors impact the use of prepositions across time in historical texts. The analysis is based on data extracted from the <em>Penn Corpora of Historical English</em> (see <a href="http://www.ling.upenn.edu/hist-corpora/" class="uri">http://www.ling.upenn.edu/hist-corpora/</a>), that consists of 603 texts written between 1125 and 1900.</p>
 <p>Be start again by loading the data.</p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="conditional-inference-trees.html#cb38-1" aria-hidden="true" tabindex="-1"></a>pvd  <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">&quot;https://slcladal.github.io/data/pvd.rda&quot;</span>, <span class="st">&quot;rb&quot;</span>)) <span class="sc">%&gt;%</span></span>

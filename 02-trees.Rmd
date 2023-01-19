@@ -2,7 +2,7 @@
 
 Conditional Inference Trees (CITs) are much better at determining the *true* effect of a predictor, i.e. the effect of a predictor if all other effects are simultaneously considered. In contrast to CARTs, CITs use p-values to determine splits in the data. Below is a conditional inference tree which shows how and what factors contribute to the use of discourse *like*. In conditional inference trees predictors are only included if the predictor is significant (i.e. if these predictors are necessary). 
 
-## Example 1: disourse like
+## Example 1: disourse like {-}
 
 In a first step, we load the data (in this case, the data is stored online and made available via the LADAL github repo).
 
@@ -49,7 +49,7 @@ plot(citd.ctree, gp = gpar(fontsize = 8)) # plot final ctree
 ```
 
 
-## Example 2: Prepositions
+## Example 2: Prepositions {-}
 
 We now proceed with a different example that uses a numeric dependent variable. In this example, we want to see what factors impact the use of prepositions across time in historical texts. The analysis is based on data extracted from the *Penn Corpora of Historical English* (see http://www.ling.upenn.edu/hist-corpora/), that consists of 603 texts written between 1125 and 1900. 
 
@@ -80,7 +80,7 @@ citd.ctree2 <- partykit::ctree(Prepositions ~ DateRedux + Region + GenreRedux,
 plot(citd.ctree2, gp = gpar(fontsize = 8)) # plot final ctree
 ```
 
-## Prettifying your CIT tree{-}
+## Prettifying your CIT tree {-}
 
 The easiest and most common way to visualize CITs is to simply use the `plot` function from `base R`. However, using this function does not allow to adapt and customize the visualization except for some very basic parameters. The `ggparty` function allows to use the `ggplot` syntax to customize CITs which allows more adjustments and is more aesthetically pleasing.
 
