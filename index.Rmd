@@ -30,13 +30,13 @@ Quantitative corpus-linguist
 * Lecturer in Applied linguistics at the University of Queensland (UQ)  
 * Associate Professor II at the Arctic University of Norway in Tromsø (UiT)
   
-* Co-Director of the Language Technology and Data Analysis Laboratory (LADAL) at UQ
+* Co-Director of the [*Language Technology and Data Analysis Laboratory* (LADAL)](https://ladal.edu.au/) at UQ
   
-* Principal Data Science Advisor to the AcqVA Aurora Lab at UiT
+* Principal Data Science Advisor to the [*AcqVA Aurora Lab* at UiT](https://site.uit.no/acqvalab/)
   
 * Projects: 
-  * Australian Text Analytics Platform (ATAP)  
-  * Language Data Commons of Australia (LDaCA)  
+  * [*Australian Text Analytics Platform* (ATAP)](https://www.atap.edu.au/)  
+  * [*Language Data Commons of Australia* (LDaCA)](https://www.ldaca.edu.au/)  
   
 Studied Philosophy, English Philology and Psychology in Kassel and Galway
 PhD in Hamburg, Post docs (or similar positions) at the Linguistic Diversity in Urban Areas Excellence Cluster (LiMA), the FU Berlin, the Universities of Greifswald, Luneburg, and Kassel
@@ -44,7 +44,7 @@ PhD in Hamburg, Post docs (or similar positions) at the Linguistic Diversity in 
 ## About the workshop {-}
 
 Timeline | Table of Contents  
-* 14:15 - 14:45Set up and Introduction  
+* 14:15 - 14:45 Set up and Introduction  
 * 14:45 - 15:00 What are tree-based models and When to use them 
 * 15:00 - 15:15 What are pros and cons?    
 * 15:15 - 15:40 Case study | Practice    
