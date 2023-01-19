@@ -43,12 +43,12 @@ PhD in Hamburg, Post docs (or similar positions) at the Linguistic Diversity in 
 
 ## About the workshop {-}
 
-Timeline | Table of Contents
-* Introduction  
-* When to use trees 
-* What are pros and cons?    
-* Case study | Practice    
-* Outro  
+Timeline | Table of Contents  
+* 14:15 - 14:45Set up and Introduction  
+* 14:45 - 15:00 What are tree-based models and When to use them 
+* 15:00 - 15:15 What are pros and cons?    
+* 15:15 - 15:40 Case study | Practice    
+* 15:40 - 15:45 Outro  
 
 During practice, we will use a Jupyter notebook and you can   
 * sit back and follow   

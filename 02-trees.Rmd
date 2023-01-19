@@ -2,20 +2,83 @@
 
 Conditional Inference Trees (CITs) are much better at determining the *true* effect of a predictor, i.e. the effect of a predictor if all other effects are simultaneously considered. In contrast to CARTs, CITs use p-values to determine splits in the data. Below is a conditional inference tree which shows how and what factors contribute to the use of discourse *like*. In conditional inference trees predictors are only included if the predictor is significant (i.e. if these predictors are necessary). 
 
-```{r cit1b, message=FALSE, warning=FALSE}
+## Example 1: disourse like
+
+In a first step, we load the data (in this case, the data is stored online and made available via the LADAL github repo).
+
+```{r cit1, message=FALSE, warning=FALSE}
 citdata <- read.delim("https://slcladal.github.io/data/treedata.txt", header = T, sep = "\t")
-set.seed(111)        # set.seed
-# apply bonferroni correction (1 minus alpha multiplied by n of predictors)
-control = ctree_control(mincriterion = 1-(.05*ncol(citdata)-1))
+# inspect the data (head shows the first 6 lines)
+head(citdata)
+```
+
+
+We can also inspect the structure of the data using the `str()` function as shown below.
+
+```{r cit2, message=FALSE, warning=FALSE}
+# inspect the data (str shows the structure of the data)
+str(citdata)
+```
+
+We can see that all variables are character variables (indicated by the `chr` next to the variable name). However, CITs require factors (not character strings) and we thus need to convert the variables into factors (which we can do using `mutate_if(is.character, factor)`) 
+
+```{r cita3, message=FALSE, warning=FALSE}
 # convert character strings to factors
 citdata <- citdata %>%
   dplyr::mutate_if(is.character, factor)
+# inspect the data (str shows the structure of the data)
+str(citdata)
+```
+
+
+Now we can implement the CIT. We start by defining a so-called control which allows us to model that we are running several test in one go. Setting a control in this case means that we lower the significance levels so that the overall significance level (of all test combined is still at $\alpha$ = .05 (this prevents errors in our analysis called *false positives*).  
+
+```{r cita4, message=FALSE, warning=FALSE}
+# apply bonferroni correction (1 minus alpha multiplied by n of predictors)
+control = ctree_control(mincriterion = 1-(.05*ncol(citdata)-1))
+```
+
+After setting the control, we implement the CIT by using the `ctree` function from the `partykit` package. This function requires the formula (the dependent variable ~ and the independent variables) and the specification of the data. Then, we plot the resulting CIT using the `plot` function.
+
+
+```{r cita6, message=FALSE, warning=FALSE}
 # create initial conditional inference tree model
 citd.ctree <- partykit::ctree(LikeUser ~ Age + Gender + Status,
                     data = citdata)
 plot(citd.ctree, gp = gpar(fontsize = 8)) # plot final ctree
 ```
 
+
+## Example 2: Prepositions
+
+We now proceed with a different example that uses a numeric dependent variable. In this example, we want to see what factors impact the use of prepositions across time in historical texts. The analysis is based on data extracted from the *Penn Corpora of Historical English* (see http://www.ling.upenn.edu/hist-corpora/), that consists of 603 texts written between 1125 and 1900. 
+
+Be start again by loading the data.
+
+```{r citb1}
+pvd  <- base::readRDS(url("https://slcladal.github.io/data/pvd.rda", "rb")) %>%
+  dplyr::mutate_if(is.character, factor) %>%
+  # remove columns we do not need
+  dplyr::select(-Date, -Genre, -Text)
+# inspect
+head(pvd); str(pvd)
+```
+
+Next, we set the control just like we did before.
+
+```{r citb4, message=FALSE, warning=FALSE}
+# apply bonferroni correction (1 minus alpha multiplied by n of predictors)
+control = ctree_control(mincriterion = 1-(.05*ncol(pvd)-1))
+```
+
+Now, we implement the CIT and plot the results.
+
+```{r citb6, message=FALSE, warning=FALSE}
+# create initial conditional inference tree model
+citd.ctree2 <- partykit::ctree(Prepositions ~ DateRedux + Region + GenreRedux,
+                    data = pvd)
+plot(citd.ctree2, gp = gpar(fontsize = 8)) # plot final ctree
+```
 
 ## Prettifying your CIT tree{-}
 
